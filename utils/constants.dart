@@ -16,7 +16,7 @@ class Edges {
   static const double kVeryLarge = 25;
 }
 
-class Colors {
+class AppColors {
   static const Color kPrimaryColor = Color(0xff27253f);
   static const Color kAccentColor = Color(0xff2dafe6);
 
