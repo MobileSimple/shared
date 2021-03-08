@@ -27,7 +27,7 @@ lib/
 ## Constants
 
 utils/constants.dart
-
+```
 class FontSizes {
   static const double kVerySmall = 10;
   static const double kSmall = 12;
@@ -48,3 +48,4 @@ class Colors {
   static const Color kPrimaryColor = Color(0xff27253f);
   static const Color kAccentColor = Color(0xff2dafe6);
 }
+```
