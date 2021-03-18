@@ -1,51 +1,16 @@
-## Folders
-```
-lib/
-----feature/
---------item/
-------------*page1.dart
-------------cubit1/
-----------------*cubit.dart
-----------------*states.dart
---------item2/
-------------*page2.dart
-------------cubit2/
-----------------*cubit.dart
-----------------*states.dart
---------shared/
-------------*widget.dart
-------------*cubit/
-----------------*cubit.dart
-----------------*states.dart
-----utils/
---------constants.dart
-----widgets/
---------*widget.dart
-```
+# shared
 
+A new Flutter project.
 
-## Constants
+## Getting Started
 
-utils/constants.dart
-```
-class FontSizes {
-  static const double kVerySmall = 10;
-  static const double kSmall = 12;
-  static const double kMedium = 14;
-  static const double kLarge = 16;
-  static const double kVeryLarge = 18;
-}
+This project is a starting point for a Flutter application.
 
-class Edges {
-  static const double kVerySmall = 5;
-  static const double kSmall = 10;
-  static const double kMedium = 15;
-  static const double kLarge = 20;
-  static const double kVeryLarge = 25;
-}
+A few resources to get you started if this is your first Flutter project:
 
-class Colors {
-  static const Color kPrimaryColor = Color(0xff27253f);
-  static const Color kAccentColor = Color(0xff2dafe6);
-}
-```
+- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+
+For help getting started with Flutter, view our
+[online documentation](https://flutter.dev/docs), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
