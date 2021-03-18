@@ -1,26 +1,29 @@
 import 'package:flutter/material.dart';
 
 class FontSizes {
-  static const double kVerySmall = 10;
-  static const double kSmall = 12;
-  static const double kMedium = 14;
-  static const double kLarge = 16;
-  static const double kVeryLarge = 18;
+  static const double verySmall = 10;
+  static const double small = 12;
+  static const double medium = 14;
+  static const double large = 16;
+  static const double veryLarge = 18;
 }
 
 class Edges {
-  static const double kVerySmall = 5;
-  static const double kSmall = 10;
-  static const double kMedium = 15;
-  static const double kLarge = 20;
-  static const double kVeryLarge = 25;
+  static const double ultraSmall = 2;
+  static const double verySmall = 5;
+  static const double small = 10;
+  static const double medium = 15;
+  static const double large = 20;
+  static const double veryLarge = 25;
+  static const double ultraLarge = 30;
 }
 
-class AppColors {
-  static const Color kPrimaryColor = Color(0xff27253f);
-  static const Color kAccentColor = Color(0xff2dafe6);
+mixin AppColors {
+  static const Color primary = Color(0xff27253f);
+  static const Color accent = Color(0xff2dafe6);
 
-  MaterialColor kPrimarySwatch = createMaterialColor(kPrimaryColor);
+  static MaterialColor primarySwatch = createMaterialColor(primary);
+  static MaterialColor accentSwatch = createMaterialColor(accent);
 
   static MaterialColor createMaterialColor(Color color) {
     final List<double> strengths = <double>[.05];
@@ -29,6 +32,7 @@ class AppColors {
     for (int i = 1; i < 10; i++) {
       strengths.add(0.1 * i);
     }
+
     for (int i = 0; i < strengths.length; i++) {
       final double ds = 0.5 - strengths[i];
       swatch[(strengths[i] * 1000).round()] = Color.fromRGBO(
