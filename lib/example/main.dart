@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:shared/utils/constants.dart';
 
@@ -37,13 +39,28 @@ class _MyHomePageState extends State<MyHomePage> {
     'sobota',
     'niedziela',
   ];
+  Future<List<String>> futureItems;
   String selectedItem;
+  Future<List<String>> getFutureItems() async {
+    await Future.delayed(Duration(milliseconds: 1500));
+    final List<String> items = <String>['iSyrop', 'Jira', 'Word'];
+    if (Random().nextInt(5) < 4) {
+      return Future.value(items);
+    } else {
+      return Future.error('Błąd podczas wczytywania danych');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('overlay 0.1.4'),
+        title: Text('overlay 0.3.0'),
       ),
       body: body(),
     );
@@ -55,7 +72,8 @@ class _MyHomePageState extends State<MyHomePage> {
       children: [
         Container(
           alignment: Alignment.center,
-          padding: const EdgeInsets.only(top: 10, left: 5, right: 5),
+          padding: const EdgeInsets.only(
+              top: Edges.small, left: Edges.verySmall, right: Edges.verySmall),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -68,47 +86,49 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
-        Container(
-          height: 2,
-          margin: const EdgeInsets.symmetric(vertical: 10),
-          color: Theme.of(context).accentColor,
-        ),
-        if (selectedItem != null) Text('wybrany element: $selectedItem') else Text(''),
-        ElevatedButton(
-          onPressed: () => overlay.showBottomText(
-            context: context,
-            text:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-          ),
-          child: Text('bottom text'),
-        ),
-        ElevatedButton(
-          onPressed: () => overlay.showBottomText(
-            context: context,
-            duration: overlay.Durations.medium,
-            text:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-          ),
-          child: Text('bottom text Durations.long'),
-        ),
-        ElevatedButton(
-          onPressed: () => overlay.showError(
-            context: context,
-            text: 'not working - bad luck',
-            duration: overlay.Durations.short,
-          ),
-          child: Text('error Durations.short'),
-        ),
-        ElevatedButton(
-          onPressed: () => overlay.showNotification(
+        separator(size: 2),
+        Text('wybrany element: $selectedItem'),
+        separator(),
+        // top
+        item(
+          text: 'notification Durations.medium',
+          action: () => overlay.showNotification(
             context: context,
             text: 'notification about something',
             duration: overlay.Durations.medium,
           ),
-          child: Text('notification Durations.medium'),
         ),
-        ElevatedButton(
-          onPressed: () => overlay.showBottomItems(
+        separator(),
+        // dialog
+        item(
+          text: 'dialog text and title',
+          action: () => overlay.showDialog(
+              context: context,
+              title: 'Dialog informacyjny',
+              text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit...'),
+        ),
+        separator(),
+        // bottom
+        item(
+          text: 'bottom text',
+          action: () => overlay.showBottomText(
+            context: context,
+            text:
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+          ),
+        ),
+        item(
+          text: 'bottom text Durations.long',
+          action: () => overlay.showBottomText(
+            context: context,
+            duration: overlay.Durations.medium,
+            text:
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+          ),
+        ),
+        item(
+          text: 'bottom items',
+          action: () => overlay.showBottomItems(
             context: context,
             items: items,
             itemWidget: (String item) => Padding(
@@ -117,16 +137,46 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             onSelectedItem: (String item) => setState(() => selectedItem = item),
           ),
-          child: Text('bottom items'),
         ),
-        ElevatedButton(
-          onPressed: () => overlay.showDialog(
-              context: context,
-              title: 'Dialog informacyjny',
-              text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit...'),
-          child: Text('dialog text and title'),
+        item(
+          text: 'bottom future items',
+          action: () => overlay.showBottomFutureItems(
+            context: context,
+            itemsFuture: getFutureItems(),
+            itemWidget: (String item) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: Edges.small),
+              child: Text(item),
+            ),
+            onSelectedItem: (String item) => setState(() => selectedItem = item),
+          ),
+        ),
+        separator(),
+        // error
+        item(
+          text: 'error Durations.short',
+          action: () => overlay.showError(
+            context: context,
+            text: 'not working - bad luck',
+            duration: overlay.Durations.short,
+          ),
         ),
       ],
     );
   }
+
+  Widget item({String text, Function action}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: Edges.ultraSmall),
+      child: ElevatedButton(
+        onPressed: action,
+        child: Text(text),
+      ),
+    );
+  }
+
+  Widget separator({double size = 1}) => Container(
+        height: size,
+        margin: const EdgeInsets.symmetric(vertical: Edges.verySmall),
+        color: Theme.of(context).accentColor,
+      );
 }

@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:shared/utils/constants.dart';
 
-enum _OverlayTypes { bottomText, bottomItems, bottomTextField, intercept, topText, dialog }
+enum _OverlayTypes {
+  bottomText,
+  bottomItems,
+  bottomFutureItems,
+  bottomTextField,
+  intercept,
+  topText,
+  dialog
+}
 enum Durations { none, short, medium, long }
 
 Map<String, OverlayEntry> _entries = <String, OverlayEntry>{};
@@ -84,7 +92,7 @@ Future<void> showError({
 Future<void> showBottomItems<T>({
   @required BuildContext context,
   @required List<T> items,
-  Widget Function(T) itemWidget,
+  @required Function(T) itemWidget,
   Function(T) onSelectedItem,
   bool backgroundTap = true,
 }) {
@@ -93,6 +101,24 @@ Future<void> showBottomItems<T>({
     context: context,
     type: _OverlayTypes.bottomItems,
     items: items,
+    itemWidget: itemWidget,
+    onSelectedItem: onSelectedItem,
+    backgroundOpacity: 64,
+    onBackgroundTap: backgroundTap ? () {} : null,
+  );
+}
+
+Future<void> showBottomFutureItems<T>({
+  @required BuildContext context,
+  @required Future<List<T>> itemsFuture,
+  @required Widget Function(T) itemWidget,
+  Function(T) onSelectedItem,
+  bool backgroundTap = true,
+}) {
+  return _show<T>(
+    context: context,
+    type: _OverlayTypes.bottomFutureItems,
+    itemsFuture: itemsFuture,
     itemWidget: itemWidget,
     onSelectedItem: onSelectedItem,
     backgroundOpacity: 64,
@@ -171,6 +197,7 @@ Future<T> _show<T>({
   TextStyle textStyle,
   String hint,
   List<T> items,
+  Future<List<T>> itemsFuture,
   Widget Function(T) itemWidget,
   Widget dialog,
   Function(T) onSelectedItem,
@@ -191,6 +218,7 @@ Future<T> _show<T>({
     textStyle: textStyle ?? const TextStyle(fontSize: FontSizes.medium, color: Colors.black),
     hint: hint,
     items: items,
+    itemsFuture: itemsFuture,
     itemWidget: itemWidget,
     dialog: dialog,
     color: color,
@@ -247,6 +275,7 @@ class _Overlay<T> extends StatefulWidget {
   final TextStyle textStyle;
   final String hint;
   final List<T> items;
+  final Future<List<T>> itemsFuture;
   final Widget Function(T) itemWidget;
   final Widget dialog;
   final int backgroundOpacity;
@@ -264,6 +293,7 @@ class _Overlay<T> extends StatefulWidget {
     this.textStyle,
     this.hint,
     this.items,
+    this.itemsFuture,
     this.itemWidget,
     this.dialog,
     this.backgroundOpacity,
@@ -433,7 +463,9 @@ class _OverlayState<T> extends State<_Overlay<T>> with TickerProviderStateMixin 
       case _OverlayTypes.bottomText:
         return text();
       case _OverlayTypes.bottomItems:
-        return items();
+        return items(widget.items);
+      case _OverlayTypes.bottomFutureItems:
+        return itemsFuture();
       case _OverlayTypes.bottomTextField:
         return bottomTextField(context);
       case _OverlayTypes.dialog:
@@ -454,13 +486,13 @@ class _OverlayState<T> extends State<_Overlay<T>> with TickerProviderStateMixin 
     );
   }
 
-  Widget items() {
+  Widget items(List<T> items) {
     return ListView.builder(
       shrinkWrap: true,
       padding: EdgeInsets.zero,
-      itemCount: widget.items.length,
+      itemCount: items.length,
       itemBuilder: (BuildContext context, int index) {
-        final T item = widget.items[index];
+        final T item = items[index];
         return Material(
           type: MaterialType.transparency,
           child: InkWell(
@@ -474,6 +506,48 @@ class _OverlayState<T> extends State<_Overlay<T>> with TickerProviderStateMixin 
             ),
           ),
         );
+      },
+    );
+  }
+
+  Widget itemsFuture() {
+    return FutureBuilder(
+      future: widget.itemsFuture,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        print(snapshot);
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Container(
+            padding: const EdgeInsets.all(Edges.medium),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.accent),
+                ),
+              ],
+            ),
+          );
+        } else if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasData) {
+            return items(snapshot.data);
+          } else {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: Edges.large, vertical: Edges.medium),
+              child: Text(
+                snapshot.error,
+                style: TextStyle(fontSize: FontSizes.medium),
+              ),
+            );
+          }
+        } else {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: Edges.large, vertical: Edges.medium),
+            child: Text(
+              'Błąd przetwarzania danych',
+              style: TextStyle(fontSize: FontSizes.medium),
+            ),
+          );
+        }
       },
     );
   }
