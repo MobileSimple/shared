@@ -6,9 +6,10 @@ enum _OverlayTypes {
   bottomItems,
   bottomFutureItems,
   bottomTextField,
+  bottomConfirm,
   intercept,
   topText,
-  dialog
+  dialog,
 }
 enum Durations { none, short, medium, long }
 
@@ -19,14 +20,33 @@ Future<void> showDialog({
   @required String title,
   @required String text,
 }) {
-  final String identifier = 'dialog_text_title';
-  return _show(
+  return _show<String>(
     context: context,
-    identifier: identifier,
     type: _OverlayTypes.dialog,
     backgroundOpacity: 64,
     title: title,
     text: text,
+    buttons: <String, Color>{'ok': AppColors.accent},
+  );
+}
+
+Future<void> showDialogConfirm({
+  @required BuildContext context,
+  @required String title,
+  @required String text,
+  @required Function(String) action,
+}) {
+  return _show<String>(
+    context: context,
+    type: _OverlayTypes.dialog,
+    backgroundOpacity: 64,
+    onSelectedItem: action,
+    title: title,
+    text: text,
+    buttons: <String, Color>{
+      'tak': AppColors.accent,
+      'nie': AppColors.red,
+    },
   );
 }
 
@@ -144,6 +164,26 @@ Future<void> showBottomTextField({
   );
 }
 
+Future<void> showBottomConfirm({
+  @required BuildContext context,
+  @required String title,
+  @required String text,
+  @required Function(String) action,
+}) {
+  return _show<String>(
+    context: context,
+    type: _OverlayTypes.bottomConfirm,
+    backgroundOpacity: 64,
+    onSelectedItem: action,
+    title: title,
+    text: text,
+    buttons: <String, Color>{
+      'tak': AppColors.accent,
+      'nie': AppColors.red,
+    },
+  );
+}
+
 Future<void> intercept({
   @required BuildContext context,
   String identifier,
@@ -205,6 +245,7 @@ Future<T> _show<T>({
   Function(String) onSubmitt,
   Duration duration = Duration.zero,
   Color color = Colors.white,
+  Map<String, Color> buttons,
 }) async {
   T result;
   final OverlayState state = Overlay.of(context);
@@ -222,6 +263,7 @@ Future<T> _show<T>({
     itemWidget: itemWidget,
     dialog: dialog,
     color: color,
+    buttons: buttons,
     backgroundOpacity: backgroundOpacity,
     onBackgroundTap: onBackgroundTap != null
         ? () async {
@@ -283,6 +325,7 @@ class _Overlay<T> extends StatefulWidget {
   final Function onSelectedItem;
   final Function(String) onSubmitt;
   final Color color;
+  final Map<String, Color> buttons;
 
   final _OverlayState<T> state = _OverlayState<T>();
 
@@ -301,6 +344,7 @@ class _Overlay<T> extends StatefulWidget {
     this.onSelectedItem,
     this.onSubmitt,
     this.color,
+    this.buttons,
     Key key,
   }) : super(key: key);
 
@@ -348,14 +392,14 @@ class _OverlayState<T> extends State<_Overlay<T>> with TickerProviderStateMixin 
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: fadeInController,
-      curve: bottom ? Curves.easeOutCubic : Curves.easeInQuad,
+      curve: bottom ? Curves.easeOutCubic : Curves.easeOutQuad,
     ));
     slideOutAnimation = Tween<Offset>(
       begin: Offset.zero,
       end: bottom ? const Offset(0.0, 1.0) : const Offset(0.0, -1.0),
     ).animate(CurvedAnimation(
       parent: fadeOutCotroller,
-      curve: bottom ? Curves.easeInCubic : Curves.easeOutQuad,
+      curve: bottom ? Curves.easeInCubic : Curves.easeInQuad,
     ));
   }
 
@@ -468,6 +512,8 @@ class _OverlayState<T> extends State<_Overlay<T>> with TickerProviderStateMixin 
         return itemsFuture();
       case _OverlayTypes.bottomTextField:
         return bottomTextField(context);
+      case _OverlayTypes.bottomConfirm:
+        return dialog();
       case _OverlayTypes.dialog:
         return dialog();
       default:
@@ -630,26 +676,59 @@ class _OverlayState<T> extends State<_Overlay<T>> with TickerProviderStateMixin 
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: Edges.large),
+              padding: const EdgeInsets.only(
+                left: Edges.large,
+                right: Edges.large,
+                bottom: Edges.small,
+              ),
               child: Text(
                 widget.text,
                 style: TextStyle(fontSize: FontSizes.medium),
               ),
             ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: () async {
-                  await hide();
-                  widget.onSelectedItem.call(null);
-                },
-                child: Text(
-                  'ok',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
+            buttons(),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget buttons() {
+    assert(widget.buttons != null);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: widget.buttons.entries
+          .map(
+            (MapEntry<String, Color> entry) => button(
+              text: entry.key,
+              color: entry.value ?? AppColors.accent,
+            ),
+          )
+          .toList(),
+    );
+  }
+
+  Widget button({String text, Color color}) {
+    return Material(
+      type: MaterialType.transparency,
+      child: InkWell(
+        onTap: () async {
+          await hide();
+          widget.onSelectedItem?.call(text);
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: Edges.large,
+            vertical: Edges.small,
+          ),
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: FontSizes.medium,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
         ),
       ),
     );

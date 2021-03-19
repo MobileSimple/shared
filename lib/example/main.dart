@@ -51,6 +51,8 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  Color color = Colors.white;
+
   @override
   void initState() {
     super.initState();
@@ -60,9 +62,14 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('overlay 0.3.2'),
+        title: Text('overlay 0.4.0'),
       ),
-      body: body(),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        color: color,
+        child: SingleChildScrollView(child: body()),
+      ),
     );
   }
 
@@ -107,6 +114,19 @@ class _MyHomePageState extends State<MyHomePage> {
               title: 'Dialog informacyjny',
               text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit...'),
         ),
+        item(
+          text: 'dialog confirm',
+          action: () => overlay.showDialogConfirm(
+              context: context,
+              title: 'Potwierdzenie',
+              text: 'Czy zmienić kolor ma ${color != Colors.purple ? 'fioletowy' : 'biały'}?',
+              action: (String button) {
+                print(button);
+                if (button == 'tak') {
+                  setState(() => color = color != Colors.purple ? Colors.purple : Colors.white);
+                }
+              }),
+        ),
         separator(),
         // bottom
         item(
@@ -149,6 +169,19 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             onSelectedItem: (String item) => setState(() => selectedItem = item),
           ),
+        ),
+        item(
+          text: 'bottom confirm',
+          action: () => overlay.showBottomConfirm(
+              context: context,
+              title: 'Potwierdzenie',
+              text: 'Czy zmienić kolor ma ${color != Colors.purple ? 'fioletowy' : 'biały'}?',
+              action: (String button) {
+                print(button);
+                if (button == 'tak') {
+                  setState(() => color = color != Colors.purple ? Colors.purple : Colors.white);
+                }
+              }),
         ),
         separator(),
         // error
