@@ -514,7 +514,6 @@ class _OverlayState<T> extends State<_Overlay<T>> with TickerProviderStateMixin 
     return FutureBuilder(
       future: widget.itemsFuture,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-        print(snapshot);
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Container(
             padding: const EdgeInsets.all(Edges.medium),
