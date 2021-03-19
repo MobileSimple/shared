@@ -22,6 +22,8 @@ mixin AppColors {
   static const Color primary = Color(0xff27253f);
   static const Color accent = Color(0xff2dafe6);
 
+  static const Color red = Color(0xffa9120a);
+
   static MaterialColor primarySwatch = createMaterialColor(primary);
   static MaterialColor accentSwatch = createMaterialColor(accent);
 
