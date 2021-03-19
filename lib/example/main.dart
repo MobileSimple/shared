@@ -60,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('overlay 0.3.0'),
+        title: Text('overlay 0.3.1'),
       ),
       body: body(),
     );
