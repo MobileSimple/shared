@@ -34,13 +34,13 @@ Future<void> showDialogConfirm({
   @required BuildContext context,
   @required String title,
   @required String text,
-  @required Function(String) action,
+  @required Function(bool) action,
 }) {
   return _show<String>(
     context: context,
     type: _OverlayTypes.dialog,
     backgroundOpacity: 64,
-    onSelectedItem: action,
+    onSelectedItem: (String button) => action?.call(button == 'tak'),
     title: title,
     text: text,
     buttons: <String, Color>{
@@ -168,13 +168,13 @@ Future<void> showBottomConfirm({
   @required BuildContext context,
   @required String title,
   @required String text,
-  @required Function(String) action,
+  @required Function(bool) action,
 }) {
   return _show<String>(
     context: context,
     type: _OverlayTypes.bottomConfirm,
     backgroundOpacity: 64,
-    onSelectedItem: action,
+    onSelectedItem: (String button) => action?.call(button == 'tak'),
     title: title,
     text: text,
     buttons: <String, Color>{
