@@ -602,7 +602,7 @@ class _OverlayState<T> extends State<_Overlay<T>> with TickerProviderStateMixin 
     return ListView.builder(
       shrinkWrap: true,
       padding: EdgeInsets.zero,
-      itemCount: widget.items.length,
+      itemCount: items.length,
       itemBuilder: (BuildContext context, int index) {
         final T item = items[index];
         return Material(
