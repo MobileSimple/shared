@@ -779,7 +779,6 @@ class _OverlayState<T> extends State<_Overlay<T>> with TickerProviderStateMixin 
   }
 
   Widget buttons() {
-    assert(widget.buttons != null);
     if (widget.buttons != null) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.end,
