@@ -62,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('overlay 0.4.0'),
+        title: Text('overlay 0.4.1'),
       ),
       body: Container(
         width: double.infinity,
@@ -120,9 +120,8 @@ class _MyHomePageState extends State<MyHomePage> {
               context: context,
               title: 'Potwierdzenie',
               text: 'Czy zmienić kolor ma ${color != Colors.purple ? 'fioletowy' : 'biały'}?',
-              action: (String button) {
-                print(button);
-                if (button == 'tak') {
+              action: (bool action) {
+                if (action) {
                   setState(() => color = color != Colors.purple ? Colors.purple : Colors.white);
                 }
               }),
@@ -176,9 +175,8 @@ class _MyHomePageState extends State<MyHomePage> {
               context: context,
               title: 'Potwierdzenie',
               text: 'Czy zmienić kolor ma ${color != Colors.purple ? 'fioletowy' : 'biały'}?',
-              action: (String button) {
-                print(button);
-                if (button == 'tak') {
+              action: (bool action) {
+                if (action) {
                   setState(() => color = color != Colors.purple ? Colors.purple : Colors.white);
                 }
               }),
