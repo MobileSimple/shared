@@ -29,7 +29,7 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('shared 0.5.1'),
+        title: Text('shared 0.5.2'),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
