@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shared/utils/constants.dart';
 
+const Duration durationShort = Duration(milliseconds: 1000);
+const Duration durationMedium = Duration(milliseconds: 2000);
+const Duration durationLong = Duration(milliseconds: 3000);
+const Duration durationNone = Duration.zero;
+
 enum _OverlayTypes {
   bottomText,
   bottomItems,
@@ -10,11 +15,15 @@ enum _OverlayTypes {
   intercept,
   topText,
   dialog,
+  dialogCustom,
 }
-enum Durations { none, short, medium, long }
 
 Map<String, OverlayEntry> _entries = <String, OverlayEntry>{};
 
+// ####################################################################
+// ------------------------------ DIALOG ------------------------------
+/// Shows middle screen dialog with given text and title.
+/// Button 'ok' is added for closing it.
 Future<void> showDialog({
   @required BuildContext context,
   @required String title,
@@ -30,89 +39,80 @@ Future<void> showDialog({
   );
 }
 
+/// Shows dialog with given title and text and two buttons to choose: 'yes', 'no'.
+///
+/// Parameter action returns true if 'yes' selected, false otherwise.
 Future<void> showDialogConfirm({
   @required BuildContext context,
   @required String title,
   @required String text,
-  @required Function(bool) action,
+  @required Function(bool) onButton,
+  bool backgroundTap = false,
 }) {
   return _show<String>(
     context: context,
     type: _OverlayTypes.dialog,
     backgroundOpacity: 64,
-    onSelectedItem: (String button) => action?.call(button == 'tak'),
+    onSelectedItem: (String button) => onButton?.call(button == 'tak'),
     title: title,
     text: text,
     buttons: <String, Color>{
       'tak': AppColors.accent,
       'nie': AppColors.red,
     },
+    onBackgroundTap: backgroundTap ? () {} : null,
   );
 }
 
+Future<void> showDialogCustom({
+  @required BuildContext context,
+  @required Widget child,
+  Function(String) onButton,
+  Map<String, Color> buttons,
+  bool backgroundTap = false,
+}) {
+  return _show<String>(
+    context: context,
+    type: _OverlayTypes.dialogCustom,
+    backgroundOpacity: 64,
+    onSelectedItem: (String button) => onButton?.call(button),
+    dialog: child,
+    buttons: buttons,
+    onBackgroundTap: backgroundTap ? () {} : null,
+  );
+}
+
+// ####################################################################
+// ------------------------------ Bottom ------------------------------
+/// Shows bottom card with given text.
+///
+/// If duration set, it will hide itself after given duration.
+/// Customizable 'backgroundTap' (true/false) for interception.
 Future<void> showBottomText({
   @required BuildContext context,
   @required String text,
-  Durations duration = Durations.none,
+  Duration duration = durationNone,
   bool backgroundTap = true,
 }) {
   return _show(
     context: context,
     type: _OverlayTypes.bottomText,
     text: text,
-    duration: _duration(duration: duration),
+    duration: duration,
     backgroundOpacity: 64,
     onBackgroundTap: backgroundTap ? () {} : null,
   );
 }
 
-Future<void> showNotification({
-  @required BuildContext context,
-  @required String text,
-  Durations duration = Durations.none,
-}) {
-  return _show(
-    context: context,
-    type: _OverlayTypes.topText,
-    text: text,
-    textStyle: TextStyle(
-      fontSize: FontSizes.medium,
-      color: Colors.white,
-      fontWeight: FontWeight.w500,
-    ),
-    color: AppColors.accent,
-    duration: _duration(duration: duration),
-    backgroundOpacity: 0,
-    onBackgroundTap: () {},
-  );
-}
-
-Future<void> showError({
-  @required BuildContext context,
-  @required String text,
-  Durations duration = Durations.none,
-  bool backgroundTap = true,
-}) {
-  return _show(
-    context: context,
-    type: _OverlayTypes.bottomText,
-    text: text,
-    textStyle: TextStyle(
-      fontSize: FontSizes.medium,
-      color: Colors.white,
-      fontWeight: FontWeight.w500,
-    ),
-    color: Colors.red,
-    duration: _duration(duration: duration),
-    backgroundOpacity: 64,
-    onBackgroundTap: backgroundTap ? () {} : null,
-  );
-}
-
+/// Shows bottom card with given list of items to choose from.
+///
+/// 'itemWidget' decides how item will appear on list (returns Widget)
+/// 'onSelectedItem' provides seleted item from list, null otherwise.
+/// Customizable 'backgroundTap' (true/false) for interception.
 Future<void> showBottomItems<T>({
   @required BuildContext context,
   @required List<T> items,
-  @required Function(T) itemWidget,
+  @required Widget Function(T) itemWidget,
   Function(T) onSelectedItem,
   bool backgroundTap = true,
 }) {
@@ -128,6 +128,8 @@ Future<void> showBottomItems<T>({
   );
 }
 
+/// Similar to 'showBottomItems', but takes Future as parameter instead of list, handles its loading and states.
+/// Shows given list of items from Future or error if occures.
 Future<void> showBottomFutureItems<T>({
   @required BuildContext context,
   @required Future<List<T>> itemsFuture,
@@ -146,17 +148,23 @@ Future<void> showBottomFutureItems<T>({
   );
 }
 
+/// Shows bottom card with TextField.
+///
+/// 'onSubmitt' passes typed value
+/// 'hint', 'value' and 'inputType' for customization
 Future<void> showBottomTextField({
   @required BuildContext context,
   @required Function(String) onSubmitt,
   String value = '',
   String hintText = '',
+  TextInputType inputType = TextInputType.text,
   bool backgroundTap = true,
 }) {
   return _show(
     context: context,
     type: _OverlayTypes.bottomTextField,
     onSubmitt: onSubmitt,
+    inputType: inputType,
     hint: hintText,
     text: value,
     backgroundOpacity: 64,
@@ -164,17 +172,20 @@ Future<void> showBottomTextField({
   );
 }
 
+/// Shows bottom card with 'yes' and 'no' dialog, using given title and text.
+///
+/// 'action' proviges true when button 'yes' selected, false oteherwise.
 Future<void> showBottomConfirm({
   @required BuildContext context,
   @required String title,
   @required String text,
-  @required Function(bool) action,
+  @required Function(bool) onButton,
 }) {
   return _show<String>(
     context: context,
     type: _OverlayTypes.bottomConfirm,
     backgroundOpacity: 64,
-    onSelectedItem: (String button) => action?.call(button == 'tak'),
+    onSelectedItem: (String button) => onButton?.call(button == 'tak'),
     title: title,
     text: text,
     buttons: <String, Color>{
@@ -184,6 +195,62 @@ Future<void> showBottomConfirm({
   );
 }
 
+// ####################################################################
+// -------------------------- NOTIFICATION ----------------------------
+/// Shows top screen informatiob with given text
+Future<void> showNotification({
+  @required BuildContext context,
+  @required String text,
+  Duration duration = durationNone,
+}) {
+  return _show(
+    context: context,
+    type: _OverlayTypes.topText,
+    text: text,
+    textStyle: TextStyle(
+      fontSize: FontSizes.medium,
+      color: Colors.white,
+      fontWeight: FontWeight.w500,
+    ),
+    color: AppColors.accent,
+    duration: duration,
+    backgroundOpacity: 0,
+    onBackgroundTap: () {},
+  );
+}
+
+// ####################################################################
+// ------------------------------ ERROR -------------------------------
+/// Shows bottom card information with red background and given text.
+///
+/// 'duration' and 'backgroundTap' for customization.
+Future<void> showError({
+  @required BuildContext context,
+  @required String text,
+  Duration duration = durationNone,
+  bool backgroundTap = true,
+}) {
+  return _show(
+    context: context,
+    type: _OverlayTypes.bottomText,
+    text: text,
+    textStyle: TextStyle(
+      fontSize: FontSizes.medium,
+      color: Colors.white,
+      fontWeight: FontWeight.w500,
+    ),
+    color: Colors.red,
+    duration: duration,
+    backgroundOpacity: 64,
+    onBackgroundTap: backgroundTap ? () {} : null,
+  );
+}
+
+// ####################################################################
+// ------------------------------ OTHER -------------------------------
+/// Shows transparent fullscreen pointer interceptor (no input can pass it)
+///
+/// to close 'intercept' use 'hide(...)' IMPORTANT: use 'identifier' for ovelray to find intecept
 Future<void> intercept({
   @required BuildContext context,
   String identifier,
@@ -198,6 +265,9 @@ Future<void> intercept({
   );
 }
 
+/// Hides overlay
+///
+/// IMPORTANT: only overlays with specified 'identifier' can be closed via 'hide(...)'
 void hide({@required String identifier}) {
   if (_entries.containsKey(identifier)) {
     _entries[identifier].remove();
@@ -205,26 +275,14 @@ void hide({@required String identifier}) {
   }
 }
 
+// ####################################################################
+// ------------------------------ BASE --------------------------------
 void _entryRemove({OverlayEntry entry, String identifier}) {
   if (_entries.containsKey(identifier)) {
     assert(entry == _entries[identifier]);
     _entries.remove(identifier);
   }
   entry.remove();
-}
-
-Duration _duration({@required Durations duration}) {
-  switch (duration) {
-    case Durations.short:
-      return const Duration(milliseconds: 1000);
-    case Durations.medium:
-      return const Duration(milliseconds: 2000);
-    case Durations.long:
-      return const Duration(milliseconds: 3000);
-    case Durations.none:
-    default:
-      return Duration.zero;
-  }
 }
 
 Future<T> _show<T>({
@@ -243,6 +301,7 @@ Future<T> _show<T>({
   Function(T) onSelectedItem,
   Function onBackgroundTap,
   Function(String) onSubmitt,
+  TextInputType inputType,
   Duration duration = Duration.zero,
   Color color = Colors.white,
   Map<String, Color> buttons,
@@ -293,6 +352,7 @@ Future<T> _show<T>({
         removed = true;
       }
     },
+    inputType: inputType,
   );
   entry = OverlayEntry(builder: (BuildContext context) => overlay);
   if (identifier != null) {
@@ -310,6 +370,8 @@ Future<T> _show<T>({
   return result;
 }
 
+// ####################################################################
+// ----------------------------- WIDGET -------------------------------
 class _Overlay<T> extends StatefulWidget {
   final _OverlayTypes type;
   final String title;
@@ -324,6 +386,7 @@ class _Overlay<T> extends StatefulWidget {
   final Function onBackgroundTap;
   final Function onSelectedItem;
   final Function(String) onSubmitt;
+  final TextInputType inputType;
   final Color color;
   final Map<String, Color> buttons;
 
@@ -343,6 +406,7 @@ class _Overlay<T> extends StatefulWidget {
     this.onBackgroundTap,
     this.onSelectedItem,
     this.onSubmitt,
+    this.inputType,
     this.color,
     this.buttons,
     Key key,
@@ -511,11 +575,13 @@ class _OverlayState<T> extends State<_Overlay<T>> with TickerProviderStateMixin 
       case _OverlayTypes.bottomFutureItems:
         return itemsFuture();
       case _OverlayTypes.bottomTextField:
-        return bottomTextField(context);
+        return bottomTextField();
       case _OverlayTypes.bottomConfirm:
         return dialog();
       case _OverlayTypes.dialog:
         return dialog();
+      case _OverlayTypes.dialogCustom:
+        return dialogCustom();
       default:
         return Container(
           padding: const EdgeInsets.all(Edges.large),
@@ -536,7 +602,7 @@ class _OverlayState<T> extends State<_Overlay<T>> with TickerProviderStateMixin 
     return ListView.builder(
       shrinkWrap: true,
       padding: EdgeInsets.zero,
-      itemCount: items.length,
+      itemCount: widget.items.length,
       itemBuilder: (BuildContext context, int index) {
         final T item = items[index];
         return Material(
@@ -597,7 +663,7 @@ class _OverlayState<T> extends State<_Overlay<T>> with TickerProviderStateMixin 
     );
   }
 
-  Widget bottomTextField(BuildContext context) {
+  Widget bottomTextField() {
     assert(widget.onSubmitt != null);
     return Padding(
       padding: const EdgeInsets.all(Edges.verySmall),
@@ -613,7 +679,7 @@ class _OverlayState<T> extends State<_Overlay<T>> with TickerProviderStateMixin 
                   child: TextField(
                     autofocus: true,
                     controller: inputController,
-                    keyboardType: TextInputType.number,
+                    keyboardType: widget.inputType,
                     onSubmitted: (String data) async {
                       await hide();
                       widget.onSubmitt?.call(data);
@@ -693,19 +759,42 @@ class _OverlayState<T> extends State<_Overlay<T>> with TickerProviderStateMixin 
     );
   }
 
+  Widget dialogCustom() {
+    return SingleChildScrollView(
+      child: Material(
+        elevation: 5,
+        child: Container(
+          color: Colors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              widget.dialog,
+              buttons(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget buttons() {
     assert(widget.buttons != null);
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: widget.buttons.entries
-          .map(
-            (MapEntry<String, Color> entry) => button(
-              text: entry.key,
-              color: entry.value ?? AppColors.accent,
-            ),
-          )
-          .toList(),
-    );
+    if (widget.buttons != null) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: widget.buttons.entries
+            .map(
+              (MapEntry<String, Color> entry) => button(
+                text: entry.key,
+                color: entry.value ?? AppColors.accent,
+              ),
+            )
+            .toList(),
+      );
+    } else {
+      return Container();
+    }
   }
 
   Widget button({String text, Color color}) {
@@ -734,3 +823,5 @@ class _OverlayState<T> extends State<_Overlay<T>> with TickerProviderStateMixin 
     );
   }
 }
+// --------------------------------------------------------------------
+// ####################################################################
