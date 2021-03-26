@@ -67,6 +67,7 @@ Future<void> showDialogConfirm({
 Future<void> showDialogCustom({
   @required BuildContext context,
   @required Widget child,
+  String identifier,
   Function(String) onButton,
   Map<String, Color> buttons,
   bool backgroundTap = false,
@@ -74,6 +75,7 @@ Future<void> showDialogCustom({
   return _show<String>(
     context: context,
     type: _OverlayTypes.dialogCustom,
+    identifier: identifier,
     backgroundOpacity: 64,
     onSelectedItem: (String button) => onButton?.call(button),
     dialog: child,
