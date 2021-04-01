@@ -1,8 +1,7 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:shared/example/pages/constants_page.dart';
+import 'package:shared/example/pages/ovelray_example_page.dart';
 import 'package:shared/example/widgets/item_widget.dart';
-import 'package:shared/example/overlay_page.dart';
 import 'package:shared/utils/constants.dart';
 
 void main() {
@@ -29,20 +28,39 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('shared 0.5.3'),
+        title: Text('shared 1.0.0'),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: Edges.medium, vertical: Edges.small),
-            child: Item(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: Edges.medium),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: Edges.medium),
+              child: Item(
                 text: 'overlay',
                 action: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => OverlayPage()));
-                }),
-          ),
-        ],
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => OverlayPage()),
+                  );
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: Edges.medium),
+              child: Item(
+                text: 'constants',
+                action: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ConstantsPage()),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
