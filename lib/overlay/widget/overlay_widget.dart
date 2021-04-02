@@ -25,7 +25,7 @@ class OverlayBody<T> extends StatefulWidget {
   bool get gotButtons => buttons != null && buttons.isNotEmpty;
   bool get isBackground => onBackground != null;
   bool get isChild => child != null;
-  bool get isTap => !gotButtons || !isChild;
+  bool get isTap => !(gotButtons || isChild || items != null || itemsFuture != null);
 
   OverlayBody(
     this.body,
@@ -54,6 +54,7 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
 
   @override
   void initState() {
+    log(widget.isTap.toString());
     super.initState();
     controller = AnimationController(duration: duration, vsync: this);
   }
@@ -109,57 +110,9 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
                   ),
                 ),
                 if (widget.body == Bodies.notification)
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    top: 0,
-                    child: GestureDetector(
-                      onTap: () {
-                        if (widget.isTap && state == States.idle) {
-                          OverlayCubit.of(context).hide();
-                        }
-                      },
-                      child: SlideTransition(
-                        position: Tween<Offset>(
-                          begin: Offset(0, -1),
-                          end: Offset(0, 0),
-                        ).animate(
-                          CurvedAnimation(
-                            curve:
-                                (state == States.showing ? Curves.easeOutQuad : Curves.easeInQuad),
-                            parent: controller,
-                          ),
-                        ),
-                        child: body(state),
-                      ),
-                    ),
-                  )
+                  Positioned(left: 0, right: 0, top: 0, child: body(state, -1))
                 else // Bodies.card
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    child: GestureDetector(
-                      onTap: () {
-                        if (widget.isTap && state == States.idle) {
-                          OverlayCubit.of(context).hide();
-                        }
-                      },
-                      child: SlideTransition(
-                        position: Tween<Offset>(
-                          begin: Offset(0, 1),
-                          end: Offset(0, 0),
-                        ).animate(
-                          CurvedAnimation(
-                            curve:
-                                (state == States.showing ? Curves.easeOutQuad : Curves.easeInQuad),
-                            parent: controller,
-                          ),
-                        ),
-                        child: body(state),
-                      ),
-                    ),
-                  )
+                  Positioned(left: 0, right: 0, bottom: 0, child: body(state, 1))
               ],
             );
           },
@@ -168,26 +121,44 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
     );
   }
 
-  Widget body(States state) {
+  Widget body(States state, double direction) {
     final MediaQueryData mediaQuery = MediaQuery.of(context);
     final double topPadding = mediaQuery.padding.top;
     final double maxHeight = mediaQuery.size.height * 0.75;
-    return Container(
-      constraints: BoxConstraints(maxHeight: maxHeight),
-      color: widget.color,
-      padding: EdgeInsets.only(top: widget.body == Bodies.notification ? topPadding : 0.0),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            title(),
-            text(),
-            child(),
-            items(state, widget.items),
-            itemsFuture(state),
-            buttons(state),
-          ],
+    return GestureDetector(
+      onTap: () {
+        if (widget.isTap && state == States.idle) {
+          OverlayCubit.of(context).hide();
+        }
+      },
+      child: SlideTransition(
+        position: Tween<Offset>(
+          begin: Offset(0, direction),
+          end: Offset(0, 0),
+        ).animate(
+          CurvedAnimation(
+            curve: (state == States.showing ? Curves.easeOutQuad : Curves.easeInQuad),
+            parent: controller,
+          ),
+        ),
+        child: Container(
+          constraints: BoxConstraints(maxHeight: maxHeight),
+          color: widget.color,
+          padding: EdgeInsets.only(top: widget.body == Bodies.notification ? topPadding : 0.0),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                title(),
+                text(),
+                child(),
+                items(state, widget.items),
+                itemsFuture(state),
+                buttons(state),
+              ],
+            ),
+          ),
         ),
       ),
     );

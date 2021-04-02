@@ -103,7 +103,7 @@ class _OverlayPageState extends State<OverlayPage> {
                       final bool confirm = await overlay.showConfirm(
                         context,
                         'Potwierdzenie',
-                        'Czy zmienić kolor na ${color == Colors.purple ? 'Niebieski' : 'Fioletowy'}',
+                        'Czy zmienić kolor na ${color == Colors.purple ? 'Niebieski' : 'Fioletowy'}?',
                       );
                       if (confirm) {
                         setState(
