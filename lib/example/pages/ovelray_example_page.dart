@@ -12,7 +12,7 @@ class OverlayPage extends StatefulWidget {
 }
 
 class _OverlayPageState extends State<OverlayPage> {
-  String info;
+  String info = '';
   Color color = Colors.blue;
   Future<List<String>> get future async {
     await Future.delayed(Duration(milliseconds: 1500));
@@ -28,6 +28,9 @@ class _OverlayPageState extends State<OverlayPage> {
   Widget build(BuildContext context) {
     final ButtonStyle buttonStyle = ButtonStyle(
       visualDensity: VisualDensity(horizontal: -1, vertical: -3),
+      textStyle: MaterialStateProperty.resolveWith(
+        (states) => TextStyle(fontSize: FontSizes.medium),
+      ),
     );
     return WillPopScope(
       onWillPop: () => Future.value(!overlay.hideLast()),
@@ -40,6 +43,22 @@ class _OverlayPageState extends State<OverlayPage> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Container(
+              alignment: Alignment.center,
+              padding: const EdgeInsets.all(Edges.medium),
+              child: Column(
+                children: [
+                  Text(
+                    'intercept input while focusing on textfield',
+                    style: TextStyle(fontSize: FontSizes.medium),
+                  ),
+                  TextField(
+                    onTap: () => overlay.intercept(context, identifier: 'hide_text_field'),
+                    onSubmitted: (_) => overlay.hide('hide_text_field'),
+                  ),
+                ],
+              ),
+            ),
             Expanded(
               child: GridView.count(
                 primary: false,
@@ -49,15 +68,21 @@ class _OverlayPageState extends State<OverlayPage> {
                   TextButton(
                     style: buttonStyle,
                     onPressed: () => overlay.showText(context, 'text'),
-                    child: Text('text', style: TextStyle(fontSize: FontSizes.small)),
+                    child: Text('text'),
+                  ),
+                  TextButton(
+                    style: buttonStyle,
+                    onPressed: () => overlay.showText(
+                      context,
+                      'text duration 1s',
+                      duration: Duration(seconds: 1),
+                    ),
+                    child: Text('text duration 1s'),
                   ),
                   TextButton(
                     style: buttonStyle,
                     onPressed: () => overlay.showTitleText(context, 'tytuł', 'text'),
-                    child: Text(
-                      'text & title',
-                      style: TextStyle(fontSize: FontSizes.small),
-                    ),
+                    child: Text('text & title'),
                   ),
                   TextButton(
                     style: buttonStyle,
@@ -77,10 +102,7 @@ class _OverlayPageState extends State<OverlayPage> {
                         }
                       });
                     },
-                    child: Text(
-                      'text & buttons',
-                      style: TextStyle(fontSize: FontSizes.small),
-                    ),
+                    child: Text('text & buttons'),
                   ),
                   TextButton(
                     style: buttonStyle,
@@ -92,10 +114,7 @@ class _OverlayPageState extends State<OverlayPage> {
                         identifier: identifier,
                       );
                     },
-                    child: Text(
-                      'child',
-                      style: TextStyle(fontSize: FontSizes.small),
-                    ),
+                    child: Text('child'),
                   ),
                   TextButton(
                     style: buttonStyle,
@@ -111,7 +130,7 @@ class _OverlayPageState extends State<OverlayPage> {
                         );
                       }
                     },
-                    child: Text('confirm', style: TextStyle(fontSize: FontSizes.small)),
+                    child: Text('confirm'),
                   ),
                   TextButton(
                     style: buttonStyle,
@@ -142,10 +161,7 @@ class _OverlayPageState extends State<OverlayPage> {
                         }
                       });
                     },
-                    child: Text(
-                      'items list',
-                      style: TextStyle(fontSize: FontSizes.small),
-                    ),
+                    child: Text('items list'),
                   ),
                   TextButton(
                     style: buttonStyle,
@@ -168,20 +184,22 @@ class _OverlayPageState extends State<OverlayPage> {
                         }
                       });
                     },
-                    child: Text(
-                      'items future list',
-                      style: TextStyle(fontSize: FontSizes.small),
-                    ),
+                    child: Text('items future list'),
                   ),
                   TextButton(
                     style: buttonStyle,
                     onPressed: () => overlay.showError(context, 'treść błędu'),
-                    child: Text('error', style: TextStyle(fontSize: FontSizes.small)),
+                    child: Text('error'),
                   ),
                   TextButton(
                     style: buttonStyle,
                     onPressed: () => overlay.showNotification(context, 'treść notyfikacji'),
-                    child: Text('notification', style: TextStyle(fontSize: FontSizes.small)),
+                    child: Text('notification'),
+                  ),
+                  TextButton(
+                    style: buttonStyle,
+                    onPressed: () => overlay.showToast(context, 'treść tosta'),
+                    child: Text('toast'),
                   ),
                 ],
               ),

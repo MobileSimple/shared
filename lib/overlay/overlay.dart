@@ -14,6 +14,7 @@ Future<String> showText(
   String text, {
   Map<String, Color> buttons,
   bool backgroundTap = true,
+  Duration duration,
 }) =>
     show(
       context,
@@ -21,6 +22,7 @@ Future<String> showText(
       text: text,
       onBackground: backgroundTap ? () {} : null,
       buttons: buttons,
+      duration: duration,
     );
 
 /// Shows card with given title and text
@@ -30,6 +32,7 @@ Future<String> showTitleText(
   String text, {
   Map<String, Color> buttons,
   bool backgroundTap = true,
+  Duration duration,
 }) =>
     show(
       context,
@@ -38,6 +41,7 @@ Future<String> showTitleText(
       text: text,
       onBackground: backgroundTap ? () {} : null,
       buttons: buttons,
+      duration: duration,
     );
 
 /// Shows card with text and button yes no confirmation
@@ -112,6 +116,7 @@ Future<void> showError(
   BuildContext context,
   String text, {
   bool backgroundTap = true,
+  Duration duration,
 }) =>
     show(
       context,
@@ -124,12 +129,14 @@ Future<void> showError(
         fontWeight: FontWeight.bold,
       ),
       onBackground: backgroundTap ? () {} : null,
+      duration: duration,
     );
 
 Future<void> showNotification(
   BuildContext context,
   String text, {
   bool backgroundTap = true,
+  Duration duration,
 }) =>
     show(
       context,
@@ -142,7 +149,37 @@ Future<void> showNotification(
         fontWeight: FontWeight.bold,
       ),
       onBackground: backgroundTap ? () {} : null,
+      duration: duration,
     );
+
+/// Sets invisible overlay, and unfocus item when there is one
+Future<void> intercept(BuildContext context, {String identifier}) {
+  return show(
+    context,
+    Bodies.notification,
+    identifier: identifier,
+    opacity: 0.0,
+    onBackground: () => FocusScope.of(context).unfocus(),
+  );
+}
+
+/// Shows toast
+Future<void> showToast(BuildContext context, String text, {Duration duration}) {
+  return show(
+    context,
+    Bodies.toast,
+    text: text,
+    textStyle: TextStyle(
+      fontSize: FontSizes.medium,
+      fontWeight: FontWeight.w500,
+    ),
+    opacity: 0.0,
+    color: Colors.grey.shade300,
+    duration: Duration(seconds: 1),
+    onBackground: () {},
+  );
+}
+
 // ############################################################################
 Map<String, OverlayCubit> _entries = <String, OverlayCubit>{};
 
@@ -162,6 +199,7 @@ Future<T> show<T>(
   Widget Function(T) itemWidget,
   Color color = Colors.white,
   double opacity = 0.33,
+  Duration duration = Duration.zero,
 }) async {
   T result;
   try {
@@ -190,19 +228,25 @@ Future<T> show<T>(
     );
     _entries.addAll(<String, OverlayCubit>{key: cubit});
     state.insert(entry);
-    const Duration wait = Duration(milliseconds: 66);
-    bool active = true;
+    const int ms = 66; // consider 16 for better UX but bad to perfermance
+    const Duration wait = Duration(milliseconds: ms);
+    int dt = 0;
+    int dtTarget = -1;
+    if (duration != null && duration > Duration.zero) {
+      dtTarget = duration.inMilliseconds;
+    }
     while (cubit.state != States.end) {
       await Future<T>.delayed(wait);
       if (cubit.state == States.init) {
         cubit.show();
       }
+      dt += ms;
+      if (cubit.state == States.idle && dtTarget != -1 && dt >= dtTarget) {
+        cubit.hide();
+      }
     }
-    if (active) {
-      entry.remove();
-      _entries.remove(key);
-      active = false;
-    }
+    entry.remove();
+    _entries.remove(key);
   } on Exception {
     result = null;
   }
