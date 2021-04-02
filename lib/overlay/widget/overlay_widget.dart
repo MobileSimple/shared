@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared/overlay/cubit/overlay_cubit.dart';
 import 'package:shared/utils/constants.dart';
 
-enum Bodies { card, notification }
+enum Bodies { card, notification, toast, intercept }
 
 class OverlayBody<T> extends StatefulWidget {
   final Bodies body;
@@ -54,7 +54,6 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
 
   @override
   void initState() {
-    log(widget.isTap.toString());
     super.initState();
     controller = AnimationController(duration: duration, vsync: this);
   }
@@ -111,8 +110,29 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
                 ),
                 if (widget.body == Bodies.notification)
                   Positioned(left: 0, right: 0, top: 0, child: body(state, -1))
-                else // Bodies.card
+                else if (widget.body == Bodies.card)
                   Positioned(left: 0, right: 0, bottom: 0, child: body(state, 1))
+                else if (widget.body == Bodies.toast)
+                  Positioned(
+                    bottom: Edges.large * 5,
+                    width: MediaQuery.of(context).size.width,
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: FadeTransition(
+                        opacity: Tween<double>(begin: 0, end: 1).animate(controller),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: widget.color,
+                            border: Border.all(color: Colors.grey.shade400, width: 2),
+                            borderRadius: BorderRadius.circular(Edges.medium),
+                          ),
+                          child: text(),
+                        ),
+                      ),
+                    ),
+                  )
+                else // Bodies.intercept
+                  Container()
               ],
             );
           },
