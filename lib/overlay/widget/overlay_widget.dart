@@ -14,6 +14,7 @@ class OverlayBody<T> extends StatefulWidget {
   final Function onItem;
   final Function onBackground;
   final String title;
+  final TextStyle titleStyle;
   final String text;
   final TextStyle textStyle;
   final Widget child;
@@ -32,6 +33,7 @@ class OverlayBody<T> extends StatefulWidget {
     this.color,
     this.onItem,
     this.title,
+    this.titleStyle,
     this.text,
     this.textStyle,
     this.child,
@@ -122,7 +124,7 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
                         opacity: Tween<double>(begin: 0, end: 1).animate(controller),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: widget.color,
+                            color: widget.color ?? Theme.of(context).dialogTheme.backgroundColor,
                             border: Border.all(color: Colors.grey.shade400, width: 2),
                             borderRadius: BorderRadius.circular(Edges.medium),
                           ),
@@ -131,7 +133,7 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
                       ),
                     ),
                   )
-                else // Bodies.intercept
+                else
                   Container()
               ],
             );
@@ -163,7 +165,7 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
         ),
         child: Container(
           constraints: BoxConstraints(maxHeight: maxHeight),
-          color: widget.color,
+          color: widget.color ?? Theme.of(context).dialogTheme.backgroundColor,
           padding: EdgeInsets.only(top: widget.body == Bodies.notification ? topPadding : 0.0),
           child: SingleChildScrollView(
             child: Column(
@@ -194,11 +196,7 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
         ),
         child: Text(
           widget.title,
-          style: TextStyle(
-            fontSize: FontSizes.medium,
-            color: Colors.grey,
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(context).dialogTheme.titleTextStyle,
         ),
       );
     } else {
@@ -213,7 +211,10 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
           horizontal: Edges.large,
           vertical: Edges.medium,
         ),
-        child: Text(widget.text, style: widget.textStyle),
+        child: Text(
+          widget.text,
+          style: widget.textStyle ?? Theme.of(context).dialogTheme.contentTextStyle,
+        ),
       );
     } else {
       return Container();
@@ -289,10 +290,7 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
                   horizontal: Edges.large,
                   vertical: Edges.medium,
                 ),
-                child: Text(
-                  snapshot.error,
-                  style: TextStyle(fontSize: FontSizes.medium),
-                ),
+                child: Text(snapshot.error),
               );
             }
           } else {
@@ -303,7 +301,6 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
               ),
               child: Text(
                 'Błąd przetwarzania danych',
-                style: TextStyle(fontSize: FontSizes.medium),
               ),
             );
           }
@@ -331,7 +328,9 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
                 },
                 child: Text(
                   entry.key,
-                  style: TextStyle(fontSize: FontSizes.large, color: entry.value),
+                  style: Theme.of(context).textTheme.button.copyWith(
+                        color: entry.value,
+                      ),
                 ),
               );
             },
