@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared/example/pages/constants_page.dart';
 import 'package:shared/example/pages/ovelray_example_page.dart';
+import 'package:shared/utils/theme.dart';
 import 'package:shared/example/widgets/item_widget.dart';
 import 'package:shared/utils/constants.dart';
 
@@ -13,9 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: AppTheme.init(),
       home: MyHomePage(),
     );
   }

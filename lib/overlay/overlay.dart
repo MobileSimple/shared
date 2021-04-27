@@ -123,11 +123,7 @@ Future<void> showError(
       Bodies.card,
       text: text,
       color: AppColors.red,
-      textStyle: TextStyle(
-        fontSize: FontSizes.medium,
-        color: Colors.white,
-        fontWeight: FontWeight.bold,
-      ),
+      textStyle: Theme.of(context).textTheme.headline6,
       onBackground: backgroundTap ? () {} : null,
       duration: duration,
     );
@@ -143,11 +139,7 @@ Future<void> showNotification(
       Bodies.notification,
       text: text,
       color: AppColors.accent,
-      textStyle: TextStyle(
-        fontSize: FontSizes.medium,
-        color: Colors.white,
-        fontWeight: FontWeight.bold,
-      ),
+      textStyle: Theme.of(context).textTheme.headline6,
       onBackground: backgroundTap ? () {} : null,
       duration: duration,
     );
@@ -169,10 +161,6 @@ Future<void> showToast(BuildContext context, String text, {Duration duration}) {
     context,
     Bodies.toast,
     text: text,
-    textStyle: TextStyle(
-      fontSize: FontSizes.medium,
-      fontWeight: FontWeight.w500,
-    ),
     opacity: 0.0,
     color: Colors.grey.shade300,
     duration: Duration(seconds: 1),
@@ -189,15 +177,16 @@ Future<T> show<T>(
   Bodies body, {
   String identifier,
   String title,
+  TextStyle titleStyle,
   String text,
-  TextStyle textStyle = const TextStyle(fontSize: FontSizes.medium, color: Colors.black),
+  TextStyle textStyle,
   Widget child,
   Map<String, Color> buttons,
   Function onBackground,
   List<T> items,
   Future<List<T>> itemsFuture,
   Widget Function(T) itemWidget,
-  Color color = Colors.white,
+  Color color,
   double opacity = 0.33,
   Duration duration = Duration.zero,
 }) async {
@@ -214,6 +203,7 @@ Future<T> show<T>(
           color,
           (T item) => result = item,
           title,
+          titleStyle,
           text,
           textStyle,
           child,

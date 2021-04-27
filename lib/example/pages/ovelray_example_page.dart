@@ -13,7 +13,7 @@ class OverlayPage extends StatefulWidget {
 
 class _OverlayPageState extends State<OverlayPage> {
   String info = '';
-  Color color = Colors.blue;
+  Color color = AppColors.primary;
   Future<List<String>> get future async {
     await Future.delayed(Duration(milliseconds: 1500));
     final List<String> items = <String>['iSyrop', 'Jira', 'Word'];
@@ -26,12 +26,12 @@ class _OverlayPageState extends State<OverlayPage> {
 
   @override
   Widget build(BuildContext context) {
-    final ButtonStyle buttonStyle = ButtonStyle(
-      visualDensity: VisualDensity(horizontal: -1, vertical: -3),
-      textStyle: MaterialStateProperty.resolveWith(
-        (states) => TextStyle(fontSize: FontSizes.medium),
-      ),
-    );
+    // final ButtonStyle buttonStyle = ButtonStyle(
+    //   visualDensity: VisualDensity(horizontal: -1, vertical: -3),
+    //   textStyle: MaterialStateProperty.resolveWith(
+    //     (states) => TextStyle(fontSize: FontSizes.medium),
+    //   ),
+    // );
     return WillPopScope(
       onWillPop: () => Future.value(!overlay.hideLast()),
       child: Scaffold(
@@ -50,7 +50,6 @@ class _OverlayPageState extends State<OverlayPage> {
                 children: [
                   Text(
                     'intercept input while focusing on textfield',
-                    style: TextStyle(fontSize: FontSizes.medium),
                   ),
                   TextField(
                     onTap: () => overlay.intercept(context, identifier: 'hide_text_field'),
@@ -60,148 +59,130 @@ class _OverlayPageState extends State<OverlayPage> {
               ),
             ),
             Expanded(
-              child: GridView.count(
-                primary: false,
-                crossAxisCount: 3,
-                childAspectRatio: 3,
-                children: <Widget>[
-                  TextButton(
-                    style: buttonStyle,
-                    onPressed: () => overlay.showText(context, 'text'),
-                    child: Text('text'),
-                  ),
-                  TextButton(
-                    style: buttonStyle,
-                    onPressed: () => overlay.showText(
-                      context,
-                      'text duration 1s',
-                      duration: Duration(seconds: 1),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    TextButton(
+                      onPressed: () => overlay.showText(context, 'text'),
+                      child: Text('text'),
                     ),
-                    child: Text('text duration 1s'),
-                  ),
-                  TextButton(
-                    style: buttonStyle,
-                    onPressed: () => overlay.showTitleText(context, 'tytuł', 'text'),
-                    child: Text('text & title'),
-                  ),
-                  TextButton(
-                    style: buttonStyle,
-                    onPressed: () async {
-                      final String data = await overlay.showText(
+                    TextButton(
+                      onPressed: () => overlay.showText(
                         context,
-                        'text',
-                        buttons: <String, Color>{
-                          'syrop': Colors.green,
-                          'tak': AppColors.accent,
-                          'nie': AppColors.red,
-                        },
-                      );
-                      setState(() {
-                        if (data != null) {
-                          info = data;
-                        }
-                      });
-                    },
-                    child: Text('text & buttons'),
-                  ),
-                  TextButton(
-                    style: buttonStyle,
-                    onPressed: () async {
-                      const String identifier = 'testowy';
-                      await overlay.showCustom(
-                        context,
-                        Custom(),
-                        identifier: identifier,
-                      );
-                    },
-                    child: Text('child'),
-                  ),
-                  TextButton(
-                    style: buttonStyle,
-                    onPressed: () async {
-                      final bool confirm = await overlay.showConfirm(
-                        context,
-                        'Potwierdzenie',
-                        'Czy zmienić kolor na ${color == Colors.purple ? 'Niebieski' : 'Fioletowy'}?',
-                      );
-                      if (confirm) {
-                        setState(
-                          () => color = color == Colors.purple ? Colors.blue : Colors.purple,
+                        'text duration 1s',
+                        duration: Duration(seconds: 1),
+                      ),
+                      child: Text('text duration 1s'),
+                    ),
+                    TextButton(
+                      onPressed: () => overlay.showTitleText(context, 'tytuł', 'text'),
+                      child: Text('text & title'),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        final String data = await overlay.showText(
+                          context,
+                          'text',
+                          buttons: <String, Color>{
+                            'syrop': Colors.green,
+                            'tak': AppColors.accent,
+                            'nie': AppColors.red,
+                          },
                         );
-                      }
-                    },
-                    child: Text('confirm'),
-                  ),
-                  TextButton(
-                    style: buttonStyle,
-                    onPressed: () async {
-                      final String data = await overlay.showItems(
-                        context,
-                        <String>[
-                          'poniedziałek',
-                          'wtorek',
-                          'środa',
-                          'czwartek',
-                          'piątek',
-                          'sobota',
-                          'niedziela',
-                        ],
-                        (String item) => Padding(
-                          padding: const EdgeInsets.symmetric(vertical: Edges.small),
-                          child: Text(
-                            item,
-                            style: TextStyle(fontSize: FontSizes.large),
-                          ),
-                        ),
-                        backgroundTap: true,
-                      );
-                      setState(() {
-                        if (data != null) {
-                          info = data;
+                        setState(() {
+                          if (data != null) {
+                            info = data;
+                          }
+                        });
+                      },
+                      child: Text('text & buttons'),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        const String identifier = 'testowy';
+                        await overlay.showCustom(
+                          context,
+                          Custom(),
+                          identifier: identifier,
+                        );
+                      },
+                      child: Text('child'),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        final bool confirm = await overlay.showConfirm(
+                          context,
+                          'Potwierdzenie',
+                          'Czy zmienić kolor na ${color == Colors.purple ? 'Niebieski' : 'Fioletowy'}?',
+                        );
+                        if (confirm) {
+                          setState(
+                            () => color = color == Colors.purple ? AppColors.primary : Colors.purple,
+                          );
                         }
-                      });
-                    },
-                    child: Text('items list'),
-                  ),
-                  TextButton(
-                    style: buttonStyle,
-                    onPressed: () async {
-                      final String data = await overlay.showItemsFuture(
-                        context,
-                        future,
-                        (String item) => Padding(
-                          padding: const EdgeInsets.symmetric(vertical: Edges.small),
-                          child: Text(
-                            item,
-                            style: TextStyle(fontSize: FontSizes.large),
+                      },
+                      child: Text('confirm'),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        final String data = await overlay.showItems(
+                          context,
+                          <String>[
+                            'poniedziałek',
+                            'wtorek',
+                            'środa',
+                            'czwartek',
+                            'piątek',
+                            'sobota',
+                            'niedziela',
+                          ],
+                          (String item) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: Edges.small),
+                            child: Text(item),
                           ),
-                        ),
-                        backgroundTap: true,
-                      );
-                      setState(() {
-                        if (data != null) {
-                          info = data;
-                        }
-                      });
-                    },
-                    child: Text('items future list'),
-                  ),
-                  TextButton(
-                    style: buttonStyle,
-                    onPressed: () => overlay.showError(context, 'treść błędu'),
-                    child: Text('error'),
-                  ),
-                  TextButton(
-                    style: buttonStyle,
-                    onPressed: () => overlay.showNotification(context, 'treść notyfikacji'),
-                    child: Text('notification'),
-                  ),
-                  TextButton(
-                    style: buttonStyle,
-                    onPressed: () => overlay.showToast(context, 'treść tosta'),
-                    child: Text('toast'),
-                  ),
-                ],
+                          backgroundTap: true,
+                        );
+                        setState(() {
+                          if (data != null) {
+                            info = data;
+                          }
+                        });
+                      },
+                      child: Text('items list'),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        final String data = await overlay.showItemsFuture(
+                          context,
+                          future,
+                          (String item) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: Edges.small),
+                            child: Text(item),
+                          ),
+                          backgroundTap: true,
+                        );
+                        setState(() {
+                          if (data != null) {
+                            info = data;
+                          }
+                        });
+                      },
+                      child: Text('items future list'),
+                    ),
+                    TextButton(
+                      onPressed: () => overlay.showError(context, 'treść błędu'),
+                      child: Text('error'),
+                    ),
+                    TextButton(
+                      onPressed: () => overlay.showNotification(context, 'treść notyfikacji'),
+                      child: Text('notification'),
+                    ),
+                    TextButton(
+                      onPressed: () => overlay.showToast(context, 'treść tosta'),
+                      child: Text('toast'),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
