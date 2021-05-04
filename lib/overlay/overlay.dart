@@ -82,6 +82,7 @@ Future<T> showItems<T>(
   Widget Function(T) itemWidget, {
   String identifier,
   bool backgroundTap = false,
+  bool close = true,
 }) {
   return show<T>(
     context,
@@ -90,6 +91,7 @@ Future<T> showItems<T>(
     items: items,
     itemWidget: itemWidget,
     onBackground: backgroundTap ? () {} : null,
+    close: close,
   );
 }
 
@@ -100,6 +102,7 @@ Future<T> showItemsFuture<T>(
   Widget Function(T) itemWidget, {
   String identifier,
   bool backgroundTap = false,
+  bool close = true,
 }) {
   return show<T>(
     context,
@@ -108,6 +111,7 @@ Future<T> showItemsFuture<T>(
     itemsFuture: itemsFuture,
     itemWidget: itemWidget,
     onBackground: backgroundTap ? () {} : null,
+    close: close,
   );
 }
 
@@ -189,6 +193,7 @@ Future<T> show<T>(
   Color color,
   double opacity = 0.33,
   Duration duration = Duration.zero,
+  bool close = false,
 }) async {
   T result;
   try {
@@ -213,6 +218,7 @@ Future<T> show<T>(
           itemWidget,
           onBackground,
           max(0, min(opacity, 1.0)),
+          close,
         ),
       ),
     );
