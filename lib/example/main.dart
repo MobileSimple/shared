@@ -27,7 +27,7 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('shared 1.2.0'),
+        title: Text('shared 1.3.0'),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: Edges.medium),
