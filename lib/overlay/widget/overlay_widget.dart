@@ -22,6 +22,7 @@ class OverlayBody<T> extends StatefulWidget {
   final List<T> items;
   final Future<List<T>> itemsFuture;
   final Widget Function(T) itemWidget;
+  final bool close;
 
   bool get gotButtons => buttons != null && buttons.isNotEmpty;
   bool get isBackground => onBackground != null;
@@ -42,7 +43,8 @@ class OverlayBody<T> extends StatefulWidget {
     this.itemsFuture,
     this.itemWidget,
     this.onBackground,
-    this.opacity, {
+    this.opacity,
+    this.close, {
     Key key,
   }) : super(key: key);
 
@@ -78,12 +80,19 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
     OverlayCubit.of(context).end();
   }
 
+  void close(States state) {
+    if (state == States.idle) {
+      widget.onBackground?.call();
+      OverlayCubit.of(context).hide();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: BlocListener<OverlayCubit, States>(
-        listener: (context, state) async {
+        listener: (BuildContext context, States state) async {
           if (state == States.showing) {
             await show();
           } else if (state == States.hiding) {
@@ -91,17 +100,14 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
           }
         },
         child: BlocBuilder<OverlayCubit, States>(
-          builder: (context, state) {
+          builder: (BuildContext context, States state) {
             return Stack(
               children: [
                 Positioned.fill(
                   child: GestureDetector(
                     onTap: () {
                       if (widget.onBackground != null) {
-                        if (state == States.idle) {
-                          widget.onBackground.call();
-                          OverlayCubit.of(context).hide();
-                        }
+                        close(state);
                       }
                     },
                     child: FadeTransition(
@@ -168,16 +174,35 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
           color: widget.color ?? Theme.of(context).dialogTheme.backgroundColor,
           padding: EdgeInsets.only(top: widget.body == Bodies.notification ? topPadding : 0.0),
           child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
+            child: Stack(
               children: [
-                title(),
-                text(),
-                child(),
-                items(state, widget.items),
-                itemsFuture(state),
-                buttons(state),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    title(),
+                    text(),
+                    child(),
+                    items(state, widget.items),
+                    itemsFuture(state),
+                    buttons(state),
+                  ],
+                ),
+                if (widget.close)
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: ClipOval(
+                      child: Material(
+                        color: Colors.transparent,
+                        shape: CircleBorder(),
+                        child: IconButton(
+                          icon: Icon(Icons.close),
+                          onPressed: () => close(state),
+                        ),
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -225,41 +250,44 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
 
   Widget items(States state, List<T> items) {
     if (items != null && items.isNotEmpty && widget.itemWidget != null) {
-      return ListView.builder(
-        shrinkWrap: true,
-        padding: EdgeInsets.zero,
-        itemCount: items.length,
-        itemBuilder: (BuildContext context, int index) {
-          final T item = items[index];
-          return Material(
-            type: MaterialType.transparency,
-            child: InkWell(
-              onTap: () {
-                if (state == States.idle) {
-                  widget.onItem?.call(item);
-                  OverlayCubit.of(context).hide();
-                }
-              },
-              child: Container(
-                alignment: Alignment.center,
-                child: Builder(
-                  builder: (context) {
-                    try {
-                      return widget.itemWidget(item);
-                    } catch (x) {
-                      log(x.toString());
-                      return Container();
+      return Stack(
+        children: [
+          ListView.builder(
+            shrinkWrap: true,
+            padding: EdgeInsets.zero,
+            itemCount: items.length,
+            itemBuilder: (BuildContext context, int index) {
+              final T item = items[index];
+              return Material(
+                type: MaterialType.transparency,
+                child: InkWell(
+                  onTap: () {
+                    if (state == States.idle) {
+                      widget.onItem?.call(item);
+                      OverlayCubit.of(context).hide();
                     }
                   },
+                  child: Container(
+                    alignment: Alignment.center,
+                    child: Builder(
+                      builder: (context) {
+                        try {
+                          return widget.itemWidget(item);
+                        } catch (x) {
+                          log(x.toString());
+                          return Container();
+                        }
+                      },
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          );
-        },
+              );
+            },
+          ),
+        ],
       );
-    } else {
-      return Container();
     }
+    return Container();
   }
 
   Widget itemsFuture(States state) {

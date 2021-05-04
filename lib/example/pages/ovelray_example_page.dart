@@ -26,12 +26,6 @@ class _OverlayPageState extends State<OverlayPage> {
 
   @override
   Widget build(BuildContext context) {
-    // final ButtonStyle buttonStyle = ButtonStyle(
-    //   visualDensity: VisualDensity(horizontal: -1, vertical: -3),
-    //   textStyle: MaterialStateProperty.resolveWith(
-    //     (states) => TextStyle(fontSize: FontSizes.medium),
-    //   ),
-    // );
     return WillPopScope(
       onWillPop: () => Future.value(!overlay.hideLast()),
       child: Scaffold(
@@ -48,9 +42,7 @@ class _OverlayPageState extends State<OverlayPage> {
               padding: const EdgeInsets.all(Edges.medium),
               child: Column(
                 children: [
-                  Text(
-                    'intercept input while focusing on textfield',
-                  ),
+                  Text('intercept input while focusing on textfield'),
                   TextField(
                     onTap: () => overlay.intercept(context, identifier: 'hide_text_field'),
                     onSubmitted: (_) => overlay.hide('hide_text_field'),
