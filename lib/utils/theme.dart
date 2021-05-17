@@ -12,7 +12,7 @@ class AppTheme {
     final ColorScheme colorSheme = ColorScheme.fromSwatch(
       primarySwatch: AppColors.primarySwatch,
       accentColor: AppColors.accent,
-      errorColor: AppColors.red,
+      errorColor: AppColors.redDark,
     );
     // theme
     // TODO calculate ratio for tablet/web

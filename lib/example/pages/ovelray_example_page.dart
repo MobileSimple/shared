@@ -78,7 +78,7 @@ class _OverlayPageState extends State<OverlayPage> {
                           buttons: <String, Color>{
                             'syrop': Colors.green,
                             'tak': AppColors.accent,
-                            'nie': AppColors.red,
+                            'nie': AppColors.redDark,
                           },
                         );
                         setState(() {
