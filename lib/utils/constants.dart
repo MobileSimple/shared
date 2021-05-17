@@ -22,7 +22,21 @@ mixin AppColors {
   static const Color primary = Color(0xff27253f);
   static const Color accent = Color(0xff2dafe6);
 
-  static const Color red = Color(0xffa9120a);
+  static const Color redDark = Color(0xffa9120a);
+
+  ///Kolor wykorzystywany do elemtnów listy
+  static const Color lightGrey = Color(0xffFAFAFD);
+
+  ///Kolor wykorzystywany do oddzielenia appBar od zawartosci ekranu
+  static const Color blueGrey = Color(0xff8BABC4);
+
+  static const Color redLight = Color(0xffDB001C);
+
+  static const Color green = Color(0xff3E859B);
+  static const Color grey = Color(0xffCED9E5);
+
+  ///Kolor wykorzystywany do drawer
+  static const Color violet = Color(0xff27253F);
 
   static MaterialColor primarySwatch = createMaterialColor(primary);
   static MaterialColor accentSwatch = createMaterialColor(accent);
