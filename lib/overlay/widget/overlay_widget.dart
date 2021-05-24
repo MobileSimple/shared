@@ -2,32 +2,33 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared/overlay/cubit/overlay_cubit.dart';
-import 'package:shared/utils/constants.dart';
+
+import '../../utils/constants.dart';
+import '../cubit/overlay_cubit.dart';
 
 enum Bodies { card, notification, toast, intercept }
 
 class OverlayBody<T> extends StatefulWidget {
-  final Bodies body;
-  final Color color;
-  final double opacity;
-  final Function onItem;
-  final Function onBackground;
-  final String title;
-  final TextStyle titleStyle;
-  final String text;
-  final TextStyle textStyle;
-  final Widget child;
-  final Map<String, Color> buttons;
-  final List<T> items;
-  final Future<List<T>> itemsFuture;
-  final Widget Function(T) itemWidget;
-  final bool close;
+  final Bodies? body;
+  final Color? color;
+  final double? opacity;
+  final Function? onItem;
+  final Function? onBackground;
+  final String? title;
+  final TextStyle? titleStyle;
+  final String? text;
+  final TextStyle? textStyle;
+  final Widget? child;
+  final Map<String, Color>? buttons;
+  final List<T>? items;
+  final Future<List<T>>? itemsFuture;
+  final Widget Function(T)? itemWidget;
+  final bool? close;
 
-  bool get gotButtons => buttons != null && buttons.isNotEmpty;
-  bool get isBackground => onBackground != null;
-  bool get isChild => child != null;
-  bool get isTap => !(gotButtons || isChild || items != null || itemsFuture != null);
+  bool? get gotButtons => buttons != null && buttons!.isNotEmpty;
+  bool? get isBackground => onBackground != null;
+  bool? get isChild => child != null;
+  bool? get isTap => !(gotButtons! || isChild! || items != null || itemsFuture != null);
 
   OverlayBody(
     this.body,
@@ -45,7 +46,7 @@ class OverlayBody<T> extends StatefulWidget {
     this.onBackground,
     this.opacity,
     this.close, {
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -54,7 +55,7 @@ class OverlayBody<T> extends StatefulWidget {
 
 class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStateMixin {
   static const Duration duration = Duration(milliseconds: 200);
-  AnimationController controller;
+  AnimationController? controller;
 
   @override
   void initState() {
@@ -64,18 +65,18 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
 
   @override
   void dispose() {
-    controller.dispose();
+    controller?.dispose();
     super.dispose();
   }
 
   Future<void> show() async {
-    controller.forward();
+    controller?.forward();
     await Future.delayed(duration);
     OverlayCubit.of(context).idle();
   }
 
   Future<void> hide() async {
-    controller.reverse();
+    controller?.reverse();
     await Future.delayed(duration);
     OverlayCubit.of(context).end();
   }
@@ -111,8 +112,8 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
                       }
                     },
                     child: FadeTransition(
-                      opacity: Tween<double>(begin: 0, end: 1).animate(controller),
-                      child: Container(color: Colors.black.withOpacity(widget.opacity)),
+                      opacity: Tween<double>(begin: 0, end: 1).animate(controller!),
+                      child: Container(color: Colors.black.withOpacity(widget.opacity!)),
                     ),
                   ),
                 ),
@@ -127,7 +128,7 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
                     child: Container(
                       alignment: Alignment.center,
                       child: FadeTransition(
-                        opacity: Tween<double>(begin: 0, end: 1).animate(controller),
+                        opacity: Tween<double>(begin: 0, end: 1).animate(controller!),
                         child: Container(
                           decoration: BoxDecoration(
                             color: widget.color ?? Theme.of(context).dialogTheme.backgroundColor,
@@ -155,7 +156,7 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
     final double maxHeight = mediaQuery.size.height * 0.75;
     return GestureDetector(
       onTap: () {
-        if (widget.isTap && state == States.idle) {
+        if (widget.isTap! && state == States.idle) {
           OverlayCubit.of(context).hide();
         }
       },
@@ -166,7 +167,7 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
         ).animate(
           CurvedAnimation(
             curve: (state == States.showing ? Curves.easeOutQuad : Curves.easeInQuad),
-            parent: controller,
+            parent: controller!,
           ),
         ),
         child: Container(
@@ -183,12 +184,12 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
                     title(),
                     text(),
                     child(),
-                    items(state, widget.items),
+                    items(state, widget.items!),
                     itemsFuture(state),
                     buttons(state),
                   ],
                 ),
-                if (widget.close)
+                if (widget.close!)
                   Positioned(
                     top: 0,
                     right: 0,
@@ -212,7 +213,7 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
   }
 
   Widget title() {
-    if (widget.title != null && widget.title.isNotEmpty) {
+    if (widget.title != null && widget.title!.isNotEmpty) {
       return Padding(
         padding: EdgeInsets.only(
           left: Edges.medium,
@@ -220,7 +221,7 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
           top: Edges.small,
         ),
         child: Text(
-          widget.title,
+          widget.title!,
           style: Theme.of(context).dialogTheme.titleTextStyle,
         ),
       );
@@ -230,14 +231,14 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
   }
 
   Widget text() {
-    if (widget.text != null && widget.text.isNotEmpty) {
+    if (widget.text != null && widget.text!.isNotEmpty) {
       return Padding(
         padding: EdgeInsets.symmetric(
           horizontal: Edges.large,
           vertical: Edges.medium,
         ),
         child: Text(
-          widget.text,
+          widget.text!,
           style: widget.textStyle ?? Theme.of(context).dialogTheme.contentTextStyle,
         ),
       );
@@ -272,7 +273,7 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
                     child: Builder(
                       builder: (context) {
                         try {
-                          return widget.itemWidget(item);
+                          return widget.itemWidget!(item);
                         } catch (x) {
                           log(x.toString());
                           return Container();
@@ -298,7 +299,7 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(Edges.medium),
+              padding: EdgeInsets.all(Edges.medium),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
@@ -314,16 +315,16 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
               return items(state, snapshot.data);
             } else {
               return Padding(
-                padding: const EdgeInsets.symmetric(
+                padding: EdgeInsets.symmetric(
                   horizontal: Edges.large,
                   vertical: Edges.medium,
                 ),
-                child: Text(snapshot.error),
+                child: Text(snapshot.error! as String),
               );
             }
           } else {
             return Padding(
-              padding: const EdgeInsets.symmetric(
+              padding: EdgeInsets.symmetric(
                 horizontal: Edges.large,
                 vertical: Edges.medium,
               ),
@@ -340,12 +341,12 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
   }
 
   Widget buttons(States state) {
-    if (widget.gotButtons) {
+    if (widget.gotButtons!) {
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: Edges.small),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
-          children: widget.buttons.entries.map(
+          children: widget.buttons!.entries.map(
             (MapEntry<String, Color> entry) {
               return TextButton(
                 onPressed: () {
@@ -356,7 +357,7 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
                 },
                 child: Text(
                   entry.key,
-                  style: Theme.of(context).textTheme.button.copyWith(
+                  style: Theme.of(context).textTheme.button!.copyWith(
                         color: entry.value,
                       ),
                 ),
