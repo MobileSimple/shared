@@ -1,11 +1,13 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:shared/example/widgets/dialog_custom_widget.dart';
-import 'package:shared/utils/constants.dart';
-import 'package:shared/overlay/overlay.dart' as overlay;
+
+import '../../utils/constants.dart';
+import '../../overlay/overlay.dart' as overlay;
+import '../widgets/dialog_custom_widget.dart';
+
 
 class OverlayPage extends StatefulWidget {
-  const OverlayPage({Key key}) : super(key: key);
+  const OverlayPage({Key? key}) : super(key: key);
 
   @override
   _OverlayPageState createState() => _OverlayPageState();
@@ -72,7 +74,7 @@ class _OverlayPageState extends State<OverlayPage> {
                     ),
                     TextButton(
                       onPressed: () async {
-                        final String data = await overlay.showText(
+                        final String? data = await overlay.showText(
                           context,
                           'text',
                           buttons: <String, Color>{
@@ -117,7 +119,7 @@ class _OverlayPageState extends State<OverlayPage> {
                     ),
                     TextButton(
                       onPressed: () async {
-                        final String data = await overlay.showItems(
+                        final String? data = await overlay.showItems(
                           context,
                           <String>[
                             'poniedziałek',
@@ -144,7 +146,7 @@ class _OverlayPageState extends State<OverlayPage> {
                     ),
                     TextButton(
                       onPressed: () async {
-                        final String data = await overlay.showItemsFuture(
+                        final String? data = await overlay.showItemsFuture(
                           context,
                           future,
                           (String item) => Padding(

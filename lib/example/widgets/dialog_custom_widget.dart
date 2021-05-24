@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:shared/utils/constants.dart';
+
+import '../../utils/constants.dart';
 
 class Custom extends StatefulWidget {
-  Custom({Key key}) : super(key: key);
+  Custom({Key? key}) : super(key: key);
 
   @override
   _CustomState createState() => _CustomState();
@@ -14,7 +15,7 @@ class _CustomState extends State<Custom> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(Edges.medium),
+      padding: EdgeInsets.all(Edges.medium),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
