@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:shared/utils/constants.dart';
+
+import '../../utils/constants.dart';
 
 class Item extends StatelessWidget {
-  final String text;
-  final Function action;
+  final String? text;
+  final VoidCallback? action;
 
-  const Item({this.text, this.action, Key key}) : super(key: key);
+  const Item({this.text, this.action, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: Edges.ultraSmall),
+      padding: EdgeInsets.symmetric(vertical: Edges.ultraSmall),
       child: ElevatedButton(
-        onPressed: action,
-        child: Text(text),
+        onPressed: action != null ? action : action,
+        child: Text(text ?? ''),
       ),
     );
   }
