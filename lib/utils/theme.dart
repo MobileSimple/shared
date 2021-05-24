@@ -1,23 +1,24 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:shared/utils/constants.dart';
+
+import 'constants.dart';
 
 class AppTheme {
   static ThemeData init() {
     // ratio for fontSize
-    final double size = min(window.physicalSize.width, window.physicalSize.height); //orientation
-    final double ratio = size > 0 ? size / 720.0 : 1.0;
+    final double? size = min(window.physicalSize.width, window.physicalSize.height); //orientation
+    final double? ratio = size! > 0 ? size / 720.0 : 1.0;
     // colors
-    final ColorScheme colorSheme = ColorScheme.fromSwatch(
-      primarySwatch: AppColors.primarySwatch,
+    final ColorScheme? colorSheme = ColorScheme.fromSwatch(
+      primarySwatch: AppColors.primarySwatch!,
       accentColor: AppColors.accent,
       errorColor: AppColors.redDark,
     );
     // theme
     // TODO calculate ratio for tablet/web
-    const IconThemeData iconTheme = IconThemeData(color: Colors.black);
-    final TextTheme textTheme = const TextTheme(
+    const IconThemeData? iconTheme = IconThemeData(color: Colors.black);
+    final TextTheme? textTheme = const TextTheme(
       headline1: TextStyle(fontSize: 32, color: Colors.red),
       headline2: TextStyle(fontSize: 26, color: Colors.green),
       headline3: TextStyle(fontSize: 22, color: Colors.yellow),
@@ -39,7 +40,7 @@ class AppTheme {
       ),
       caption: TextStyle(fontSize: 12, color: Colors.black),
       overline: TextStyle(fontSize: 12, color: Colors.black),
-    ).apply(fontSizeFactor: ratio);
+    ).apply(fontSizeFactor: ratio!);
     final ThemeData theme = ThemeData(
       colorScheme: colorSheme,
       primaryColorBrightness: Brightness.light,
@@ -64,18 +65,18 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           onPrimary: Colors.white,
           primary: AppColors.accent,
-          padding: const EdgeInsets.symmetric(
+          padding: EdgeInsets.symmetric(
             horizontal: Edges.medium,
             vertical: Edges.verySmall + Edges.ultraSmall,
           ),
-          shape: const RoundedRectangleBorder(
+          shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(
               Radius.circular(Edges.large),
             ),
           ),
         ),
       ),
-      cardTheme: const CardTheme(
+      cardTheme: CardTheme(
         color: Colors.white,
         elevation: 4,
         shape: RoundedRectangleBorder(
@@ -91,7 +92,7 @@ class AppTheme {
         foregroundColor: AppColors.accent,
         iconTheme: const IconThemeData(color: Colors.white),
         // titleTextStyle: TextStyle(fontSize: FontSizes.large * ratio, color: Colors.black),
-        titleTextStyle: textTheme.headline6,
+        titleTextStyle: textTheme!.headline6,
       ),
       dialogTheme: DialogTheme(
         backgroundColor: Colors.white,
