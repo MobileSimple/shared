@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:shared/utils/constants.dart';
+
+import '../../utils/constants.dart';
 
 class ConstantsPage extends StatelessWidget {
-  const ConstantsPage({Key key}) : super(key: key);
+  const ConstantsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,7 @@ class ConstantsPage extends StatelessWidget {
             ],
           ),
           Padding(
-            padding: const EdgeInsets.all(Edges.small),
+            padding: EdgeInsets.all(Edges.small),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -42,18 +43,18 @@ class ConstantsPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    font(context, 'headline1', tt.headline1),
-                    font(context, 'headline2', tt.headline2),
-                    font(context, 'headline3', tt.headline3),
-                    font(context, 'headline4', tt.headline4),
-                    font(context, 'headline5', tt.headline5),
-                    font(context, 'headline6', tt.headline6),
-                    font(context, 'subtitle1', tt.subtitle1),
-                    font(context, 'subtitle2', tt.subtitle2),
-                    font(context, 'bodyText1', tt.bodyText1),
-                    font(context, 'bodyText2', tt.bodyText2),
-                    font(context, 'caption', tt.caption),
-                    font(context, 'overline', tt.overline),
+                    font(context, 'headline1', tt.headline1!),
+                    font(context, 'headline2', tt.headline2!),
+                    font(context, 'headline3', tt.headline3!),
+                    font(context, 'headline4', tt.headline4!),
+                    font(context, 'headline5', tt.headline5!),
+                    font(context, 'headline6', tt.headline6!),
+                    font(context, 'subtitle1', tt.subtitle1!),
+                    font(context, 'subtitle2', tt.subtitle2!),
+                    font(context, 'bodyText1', tt.bodyText1!),
+                    font(context, 'bodyText2', tt.bodyText2!),
+                    font(context, 'caption', tt.caption!),
+                    font(context, 'overline', tt.overline!),
                   ],
                 ),
               ),
@@ -71,7 +72,7 @@ class ConstantsPage extends StatelessWidget {
       padding: const EdgeInsets.all(Edges.small),
       child: Text(
         name,
-        style: Theme.of(context).textTheme.bodyText2.copyWith(
+        style: Theme.of(context).textTheme.bodyText2!.copyWith(
               color: color.computeLuminance() > 0.3 ? Colors.black : Colors.white,
             ),
       ),

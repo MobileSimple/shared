@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:shared/example/pages/constants_page.dart';
-import 'package:shared/example/pages/ovelray_example_page.dart';
-import 'package:shared/utils/theme.dart';
-import 'package:shared/example/widgets/item_widget.dart';
-import 'package:shared/utils/constants.dart';
+
+import '../utils/constants.dart';
+import '../utils/theme.dart';
+import 'pages/constants_page.dart';
+import 'pages/overlay_example_page.dart';
+import 'widgets/item_widget.dart';
 
 void main() {
   runApp(MyApp());
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatelessWidget {
-  MyHomePage({Key key}) : super(key: key);
+  MyHomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,12 +31,12 @@ class MyHomePage extends StatelessWidget {
         title: Text('shared 1.3.0'),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: Edges.medium),
+        padding: EdgeInsets.symmetric(vertical: Edges.medium),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: Edges.medium),
+              padding: EdgeInsets.symmetric(horizontal: Edges.medium),
               child: Item(
                 text: 'overlay',
                 action: () {
@@ -47,7 +48,7 @@ class MyHomePage extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: Edges.medium),
+              padding: EdgeInsets.symmetric(horizontal: Edges.medium),
               child: Item(
                 text: 'constants',
                 action: () {
