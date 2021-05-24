@@ -2,46 +2,47 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared/overlay/cubit/overlay_cubit.dart';
-import 'package:shared/overlay/widget/overlay_widget.dart';
-import 'package:shared/utils/constants.dart';
 import 'package:uuid/uuid.dart';
+
+import '../utils/constants.dart';
+import 'cubit/overlay_cubit.dart';
+import 'widget/overlay_widget.dart';
 
 // ############################################################################
 /// Shows card with given text
-Future<String> showText(
+Future<String?> showText(
   BuildContext context,
   String text, {
-  Map<String, Color> buttons,
+  Map<String, Color>? buttons,
   bool backgroundTap = true,
-  Duration duration,
+  Duration? duration,
 }) =>
     show(
       context,
       Bodies.card,
       text: text,
-      onBackground: backgroundTap ? () {} : null,
-      buttons: buttons,
-      duration: duration,
+      onBackground: backgroundTap ? () {} : () => null,
+      buttons: buttons!,
+      duration: duration!,
     );
 
 /// Shows card with given title and text
-Future<String> showTitleText(
+Future<String?> showTitleText(
   BuildContext context,
   String title,
   String text, {
-  Map<String, Color> buttons,
+  Map<String, Color>? buttons,
   bool backgroundTap = true,
-  Duration duration,
+  Duration? duration,
 }) =>
     show(
       context,
       Bodies.card,
       title: title,
       text: text,
-      onBackground: backgroundTap ? () {} : null,
-      buttons: buttons,
-      duration: duration,
+      onBackground: backgroundTap ? () {} : () => null,
+      buttons: buttons!,
+      duration: duration!,
     );
 
 /// Shows card with text and button yes no confirmation
@@ -50,7 +51,7 @@ Future<bool> showConfirm(
   String title,
   String text,
 ) async {
-  final String confirm = await show<String>(
+  final String? confirm = await show<String>(
     context,
     Bodies.card,
     title: title,
@@ -64,53 +65,53 @@ Future<bool> showConfirm(
 Future<void> showCustom<T>(
   BuildContext context,
   Widget child, {
-  String identifier,
+  String? identifier,
   bool backgroundTap = true,
 }) =>
     show(
       context,
       Bodies.card,
-      identifier: identifier,
+      identifier: identifier!,
       child: child,
-      onBackground: backgroundTap ? () {} : null,
+      onBackground: backgroundTap ? () {} : () => null,
     );
 
 /// Shows card with selectable item list
-Future<T> showItems<T>(
+Future<T?> showItems<T>(
   BuildContext context,
   List<T> items,
   Widget Function(T) itemWidget, {
-  String identifier,
+  String? identifier,
   bool backgroundTap = false,
   bool close = true,
 }) {
   return show<T>(
     context,
     Bodies.card,
-    identifier: identifier,
+    identifier: identifier!,
     items: items,
     itemWidget: itemWidget,
-    onBackground: backgroundTap ? () {} : null,
+    onBackground: backgroundTap ? () {} : () => null,
     close: close,
   );
 }
 
 /// Shows card with selectable item future list
-Future<T> showItemsFuture<T>(
+Future<T?> showItemsFuture<T>(
   BuildContext context,
   Future<List<T>> itemsFuture,
   Widget Function(T) itemWidget, {
-  String identifier,
+  String? identifier,
   bool backgroundTap = false,
   bool close = true,
 }) {
   return show<T>(
     context,
     Bodies.card,
-    identifier: identifier,
+    identifier: identifier!,
     itemsFuture: itemsFuture,
     itemWidget: itemWidget,
-    onBackground: backgroundTap ? () {} : null,
+    onBackground: backgroundTap ? () {} : () => null,
     close: close,
   );
 }
@@ -120,47 +121,47 @@ Future<void> showError(
   BuildContext context,
   String text, {
   bool backgroundTap = true,
-  Duration duration,
+  Duration? duration,
 }) =>
     show(
       context,
       Bodies.card,
       text: text,
       color: AppColors.redDark,
-      textStyle: Theme.of(context).textTheme.headline6,
-      onBackground: backgroundTap ? () {} : null,
-      duration: duration,
+      textStyle: Theme.of(context).textTheme.headline6!,
+      onBackground: backgroundTap ? () {} : () => null,
+      duration: duration!,
     );
 
 Future<void> showNotification(
   BuildContext context,
   String text, {
   bool backgroundTap = true,
-  Duration duration,
+  Duration? duration,
 }) =>
     show(
       context,
       Bodies.notification,
       text: text,
       color: AppColors.accent,
-      textStyle: Theme.of(context).textTheme.headline6,
-      onBackground: backgroundTap ? () {} : null,
-      duration: duration,
+      textStyle: Theme.of(context).textTheme.headline6!,
+      onBackground: backgroundTap ? () {} : () => null,
+      duration: duration!,
     );
 
 /// Sets invisible overlay, and unfocus item when there is one
-Future<void> intercept(BuildContext context, {String identifier}) {
+Future<void> intercept(BuildContext context, {String? identifier}) {
   return show(
     context,
     Bodies.notification,
-    identifier: identifier,
+    identifier: identifier!,
     opacity: 0.0,
     onBackground: () => FocusScope.of(context).unfocus(),
   );
 }
 
 /// Shows toast
-Future<void> showToast(BuildContext context, String text, {Duration duration}) {
+Future<void> showToast(BuildContext context, String text, {Duration? duration}) {
   return show(
     context,
     Bodies.toast,
@@ -176,29 +177,29 @@ Future<void> showToast(BuildContext context, String text, {Duration duration}) {
 Map<String, OverlayCubit> _entries = <String, OverlayCubit>{};
 
 /// Shows overlay with given parameters
-Future<T> show<T>(
+Future<T?> show<T>(
   BuildContext context,
   Bodies body, {
-  String identifier,
-  String title,
-  TextStyle titleStyle,
-  String text,
-  TextStyle textStyle,
-  Widget child,
-  Map<String, Color> buttons,
-  Function onBackground,
-  List<T> items,
-  Future<List<T>> itemsFuture,
-  Widget Function(T) itemWidget,
-  Color color,
-  double opacity = 0.33,
-  Duration duration = Duration.zero,
-  bool close = false,
+  String? identifier,
+  String? title,
+  TextStyle? titleStyle,
+  String? text,
+  TextStyle? textStyle,
+  Widget? child,
+  Map<String, Color>? buttons,
+  Function? onBackground,
+  List<T>? items,
+  Future<List<T>>? itemsFuture,
+  Widget Function(T)? itemWidget,
+  Color? color,
+  double? opacity = 0.33,
+  Duration? duration = Duration.zero,
+  bool? close = false,
 }) async {
-  T result;
+  T? result;
   try {
     final String key = identifier ?? Uuid().v4();
-    final OverlayState state = Overlay.of(context);
+    final OverlayState state = Overlay.of(context)!;
     final OverlayCubit cubit = OverlayCubit();
     final OverlayEntry entry = OverlayEntry(
       builder: (BuildContext context) => BlocProvider(
@@ -217,7 +218,7 @@ Future<T> show<T>(
           itemsFuture,
           itemWidget,
           onBackground,
-          max(0, min(opacity, 1.0)),
+          max(0, min(opacity!, 1.0)),
           close,
         ),
       ),
@@ -251,7 +252,7 @@ Future<T> show<T>(
 
 void hide(String identifier) {
   if (_entries.containsKey(identifier)) {
-    _entries[identifier].hide();
+    _entries[identifier]!.hide();
     _entries.remove(identifier);
   }
 }
@@ -268,7 +269,7 @@ bool hideLast() {
 
 void hideAll() {
   _entries.forEach((key, value) {
-    value?.hide();
+    value.hide();
   });
   _entries.clear();
 }
