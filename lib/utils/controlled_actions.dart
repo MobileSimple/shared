@@ -1,4 +1,4 @@
-import 'package:shared_nullsafety/utils/logger.dart';
+import 'package:shared/utils/logger.dart';
 
 const String actionScanner = 'scanner';
 const String actionStart = 'start';
