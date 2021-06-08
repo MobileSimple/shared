@@ -26,7 +26,6 @@ class Logger {
   static void exception(String message, {Map<String, dynamic>? args}) => _log(message, 'EXCEPTION | ', args!);
   static void http(String message, {Map<String, dynamic>? args}) => _log(message, 'HTTP | ', args!);
   static void navigation(String message, {Map<String, dynamic>? args}) => _log(message, 'NAVIGATION | ', args!);
-  //static void sesssion() => _log(Session.dataToString(), 'SESSION | ', null);
 
   static Future<void> _log(String message, String prefix, Map<String, dynamic> args, {FileMode fileMode = FileMode.writeOnlyAppend}) async {
     final StringBuffer sb = StringBuffer();
