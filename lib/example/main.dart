@@ -28,7 +28,7 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('shared 1.3.0'),
+        title: Text('shared 2.1.1-nullsafety'),
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(vertical: Edges.medium),
