@@ -80,6 +80,7 @@ Future<T> showItems<T>(
   BuildContext context,
   List<T> items,
   Widget Function(T) itemWidget, {
+  String title,
   String identifier,
   bool backgroundTap = false,
   bool close = true,
@@ -87,6 +88,7 @@ Future<T> showItems<T>(
   return show<T>(
     context,
     Bodies.card,
+    title: title,
     identifier: identifier,
     items: items,
     itemWidget: itemWidget,
@@ -101,12 +103,14 @@ Future<T> showItemsFuture<T>(
   Future<List<T>> itemsFuture,
   Widget Function(T) itemWidget, {
   String identifier,
+  String title,
   bool backgroundTap = false,
   bool close = true,
 }) {
   return show<T>(
     context,
     Bodies.card,
+    title: title,
     identifier: identifier,
     itemsFuture: itemsFuture,
     itemWidget: itemWidget,
@@ -155,7 +159,12 @@ Future<void> intercept(BuildContext context, {String identifier}) {
     Bodies.notification,
     identifier: identifier,
     opacity: 0.0,
-    onBackground: () => FocusScope.of(context).unfocus(),
+    onBackground: () {
+      final FocusScopeNode currentScope = FocusScope.of(context);
+      if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
+        FocusManager.instance.primaryFocus.unfocus();
+      }
+    },
   );
 }
 
