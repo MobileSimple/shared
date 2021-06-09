@@ -17,7 +17,7 @@ class ConstantsPage extends StatelessWidget {
             children: [
               Expanded(child: color(context, 'accent', AppColors.accent)),
               Expanded(child: color(context, 'primary', AppColors.primary)),
-              Expanded(child: color(context, 'red', AppColors.red)),
+              Expanded(child: color(context, 'redDark', AppColors.redDark)),
             ],
           ),
           Padding(

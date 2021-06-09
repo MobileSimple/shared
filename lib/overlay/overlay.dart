@@ -55,7 +55,7 @@ Future<bool> showConfirm(
     Bodies.card,
     title: title,
     text: text,
-    buttons: <String, Color>{'Tak': AppColors.accent, 'Nie': AppColors.red},
+    buttons: <String, Color>{'Tak': AppColors.accent, 'Nie': AppColors.redDark},
   );
   return confirm == 'Tak';
 }
@@ -130,7 +130,7 @@ Future<void> showError(
       context,
       Bodies.card,
       text: text,
-      color: AppColors.red,
+      color: AppColors.redDark,
       textStyle: Theme.of(context).textTheme.headline6,
       onBackground: backgroundTap ? () {} : null,
       duration: duration,
