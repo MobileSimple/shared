@@ -28,7 +28,7 @@ class OverlayBody<T> extends StatefulWidget {
   bool? get gotButtons => buttons != null && buttons!.isNotEmpty;
   bool? get isBackground => onBackground != null;
   bool? get isChild => child != null;
-  bool? get isTap => !(gotButtons! || isChild! || items != null || itemsFuture != null);
+  bool? get isTap => !(gotButtons ?? false || isChild != null ? isChild! : false || items != null || itemsFuture != null);
 
   OverlayBody(
     this.body,
@@ -184,7 +184,7 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
                     title(),
                     text(),
                     child(),
-                    items(state, widget.items!),
+                    items(state, widget.items != null ? widget.items! : []),
                     itemsFuture(state),
                     buttons(state),
                   ],
@@ -249,7 +249,7 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
 
   Widget child() => widget.child ?? Container();
 
-  Widget items(States state, List<T> items) {
+  Widget items(States state, List<T>? items) {
     if (items != null && items.isNotEmpty && widget.itemWidget != null) {
       return Stack(
         children: [

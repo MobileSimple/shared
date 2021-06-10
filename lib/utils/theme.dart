@@ -7,8 +7,8 @@ import 'constants.dart';
 class AppTheme {
   static ThemeData init() {
     // ratio for fontSize
-    final double? size = min(window.physicalSize.width, window.physicalSize.height); //orientation
-    final double? ratio = size! > 0 ? size / 720.0 : 1.0;
+    final double size = min(window.physicalSize.width, window.physicalSize.height); //orientation
+    final double ratio = size > 0 ? size / 720.0 : 1.0;
     // colors
     final ColorScheme? colorSheme = ColorScheme.fromSwatch(
       primarySwatch: AppColors.primarySwatch!,
@@ -40,7 +40,7 @@ class AppTheme {
       ),
       caption: TextStyle(fontSize: 12, color: Colors.black),
       overline: TextStyle(fontSize: 12, color: Colors.black),
-    ).apply(fontSizeFactor: ratio!);
+    ).apply(fontSizeFactor: ratio);
     final ThemeData theme = ThemeData(
       colorScheme: colorSheme,
       primaryColorBrightness: Brightness.light,

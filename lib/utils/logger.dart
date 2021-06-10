@@ -21,32 +21,34 @@ class Logger {
     await _log('init', '', {}, fileMode: FileMode.writeOnly);
   }
 
-  static void action(String message, {Map<String, dynamic>? args}) => _log(message, 'ACTION | ', args!);
-  static void error(String message, {Map<String, dynamic>? args}) => _log(message, 'ERROR | ', args!);
-  static void exception(String message, {Map<String, dynamic>? args}) => _log(message, 'EXCEPTION | ', args!);
-  static void http(String message, {Map<String, dynamic>? args}) => _log(message, 'HTTP | ', args!);
-  static void navigation(String message, {Map<String, dynamic>? args}) => _log(message, 'NAVIGATION | ', args!);
+  static void action(String message, {Map<String, dynamic>? args}) => _log(message, 'ACTION | ', args ?? {});
+  static void error(String message, {Map<String, dynamic>? args}) => _log(message, 'ERROR | ', args ?? {});
+  static void exception(String message, {Map<String, dynamic>? args}) => _log(message, 'EXCEPTION | ', args ?? {});
+  static void http(String message, {Map<String, dynamic>? args}) => _log(message, 'HTTP | ', args ?? {});
+  static void navigation(String message, {Map<String, dynamic>? args}) => _log(message, 'NAVIGATION | ', args ?? {});
 
-  static Future<void> _log(String message, String prefix, Map<String, dynamic> args, {FileMode fileMode = FileMode.writeOnlyAppend}) async {
+  static Future<void> _log(String? message, String? prefix, Map<String, dynamic>? args, {FileMode fileMode = FileMode.writeOnlyAppend}) async {
     final StringBuffer sb = StringBuffer();
     sb.write(prefix ?? '');
-    sb.write(message);
+    sb.write(message ?? '');
     if (args != null && args.isNotEmpty) {
       sb.write('\t');
       sb.write(args.toString());
     }
-    final String data = sb.toString();
+    final String? data = sb.toString();
     log(data ?? 'no message');
     _historyAdd(_timeStamp, data);
     await _file!.writeAsString('$_timeStamp: $data', mode: fileMode);
   }
 
   static void _historyAdd(String key, dynamic value) {
-    if (_history!.containsKey(key)) {
-      _history![key] += '\n$value';
-      return;
+    if (_history != null) {
+      if (_history!.containsKey(key)) {
+        _history![key] += '\n$value';
+        return;
+      }
+      _history!.addAll(<String, dynamic>{key: value});
     }
-    _history!.addAll(<String, dynamic>{key: value});
   }
 
   @override
