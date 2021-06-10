@@ -22,8 +22,8 @@ Future<String?> showText(
       Bodies.card,
       text: text,
       onBackground: backgroundTap ? () {} : () => null,
-      buttons: buttons!,
-      duration: duration!,
+      buttons: buttons,
+      duration: duration,
     );
 
 /// Shows card with given title and text
@@ -41,8 +41,8 @@ Future<String?> showTitleText(
       title: title,
       text: text,
       onBackground: backgroundTap ? () {} : () => null,
-      buttons: buttons!,
-      duration: duration!,
+      buttons: buttons,
+      duration: duration,
     );
 
 /// Shows card with text and button yes no confirmation
@@ -71,7 +71,7 @@ Future<void> showCustom<T>(
     show(
       context,
       Bodies.card,
-      identifier: identifier!,
+      identifier: identifier,
       child: child,
       onBackground: backgroundTap ? () {} : () => null,
     );
@@ -88,7 +88,7 @@ Future<T?> showItems<T>(
   return show<T>(
     context,
     Bodies.card,
-    identifier: identifier!,
+    identifier: identifier,
     items: items,
     itemWidget: itemWidget,
     onBackground: backgroundTap ? () {} : () => null,
@@ -108,7 +108,7 @@ Future<T?> showItemsFuture<T>(
   return show<T>(
     context,
     Bodies.card,
-    identifier: identifier!,
+    identifier: identifier,
     itemsFuture: itemsFuture,
     itemWidget: itemWidget,
     onBackground: backgroundTap ? () {} : () => null,
@@ -130,7 +130,7 @@ Future<void> showError(
       color: AppColors.redDark,
       textStyle: Theme.of(context).textTheme.headline6!,
       onBackground: backgroundTap ? () {} : () => null,
-      duration: duration!,
+      duration: duration,
     );
 
 Future<void> showNotification(
@@ -144,9 +144,9 @@ Future<void> showNotification(
       Bodies.notification,
       text: text,
       color: AppColors.accent,
-      textStyle: Theme.of(context).textTheme.headline6!,
+      textStyle: Theme.of(context).textTheme.headline6,
       onBackground: backgroundTap ? () {} : () => null,
-      duration: duration!,
+      duration: duration,
     );
 
 /// Sets invisible overlay, and unfocus item when there is one
@@ -154,7 +154,7 @@ Future<void> intercept(BuildContext context, {String? identifier}) {
   return show(
     context,
     Bodies.notification,
-    identifier: identifier!,
+    identifier: identifier,
     opacity: 0.0,
     onBackground: () => FocusScope.of(context).unfocus(),
   );
@@ -179,7 +179,7 @@ Map<String, OverlayCubit> _entries = <String, OverlayCubit>{};
 /// Shows overlay with given parameters
 Future<T?> show<T>(
   BuildContext context,
-  Bodies body, {
+  Bodies? body, {
   String? identifier,
   String? title,
   TextStyle? titleStyle,
@@ -218,7 +218,7 @@ Future<T?> show<T>(
           itemsFuture,
           itemWidget,
           onBackground,
-          max(0, min(opacity!, 1.0)),
+          max(0, min(opacity ?? 0, 1.0)),
           close,
         ),
       ),
@@ -226,14 +226,14 @@ Future<T?> show<T>(
     _entries.addAll(<String, OverlayCubit>{key: cubit});
     state.insert(entry);
     const int ms = 66; // consider 16 for better UX but bad to perfermance
-    const Duration wait = Duration(milliseconds: ms);
+    const Duration? wait = Duration(milliseconds: ms);
     int dt = 0;
     int dtTarget = -1;
     if (duration != null && duration > Duration.zero) {
       dtTarget = duration.inMilliseconds;
     }
     while (cubit.state != States.end) {
-      await Future<T>.delayed(wait);
+      await Future<T?>.delayed(wait);
       if (cubit.state == States.init) {
         cubit.show();
       }
