@@ -169,14 +169,14 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
             parent: controller,
           ),
         ),
-        child: Container(
-          constraints: BoxConstraints(maxHeight: maxHeight),
-          color: widget.color ?? Theme.of(context).dialogTheme.backgroundColor,
-          padding: EdgeInsets.only(top: widget.body == Bodies.notification ? topPadding : 0.0),
-          child: SingleChildScrollView(
-            child: Stack(
-              children: [
-                Column(
+        child: Stack(
+          children: [
+            Container(
+              constraints: BoxConstraints(maxHeight: maxHeight),
+              color: widget.color ?? Theme.of(context).dialogTheme.backgroundColor,
+              padding: EdgeInsets.only(top: widget.body == Bodies.notification ? topPadding : 0.0),
+              child: SingleChildScrollView(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -188,24 +188,24 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
                     buttons(state),
                   ],
                 ),
-                if (widget.close)
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: ClipOval(
-                      child: Material(
-                        color: Colors.transparent,
-                        shape: CircleBorder(),
-                        child: IconButton(
-                          icon: Icon(Icons.close),
-                          onPressed: () => close(state),
-                        ),
-                      ),
+              ),
+            ),
+            if (widget.close)
+              Positioned(
+                top: 0,
+                right: 0,
+                child: ClipOval(
+                  child: Material(
+                    color: Colors.transparent,
+                    shape: CircleBorder(),
+                    child: IconButton(
+                      icon: Icon(Icons.close),
+                      onPressed: () => close(state),
                     ),
                   ),
-              ],
-            ),
-          ),
+                ),
+              ),
+          ],
         ),
       ),
     );
@@ -250,41 +250,33 @@ class _OverlayBodyState<T> extends State<OverlayBody<T>> with TickerProviderStat
 
   Widget items(States state, List<T> items) {
     if (items != null && items.isNotEmpty && widget.itemWidget != null) {
-      return Stack(
-        children: [
-          ListView.builder(
-            shrinkWrap: true,
-            padding: EdgeInsets.zero,
-            itemCount: items.length,
-            itemBuilder: (BuildContext context, int index) {
-              final T item = items[index];
-              return Material(
-                type: MaterialType.transparency,
-                child: InkWell(
-                  onTap: () {
-                    if (state == States.idle) {
-                      widget.onItem?.call(item);
-                      OverlayCubit.of(context).hide();
-                    }
-                  },
-                  child: Container(
-                    alignment: Alignment.center,
-                    child: Builder(
-                      builder: (context) {
-                        try {
-                          return widget.itemWidget(item);
-                        } catch (x) {
-                          log(x.toString());
-                          return Container();
-                        }
-                      },
+      return Column(
+        children: items
+            .map((T item) => Material(
+                  type: MaterialType.transparency,
+                  child: InkWell(
+                    onTap: () {
+                      if (state == States.idle) {
+                        widget.onItem?.call(item);
+                        OverlayCubit.of(context).hide();
+                      }
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: Builder(
+                        builder: (context) {
+                          try {
+                            return widget.itemWidget(item);
+                          } catch (x) {
+                            log(x.toString());
+                            return Container();
+                          }
+                        },
+                      ),
                     ),
                   ),
-                ),
-              );
-            },
-          ),
-        ],
+                ))
+            .toList(),
       );
     }
     return Container();
